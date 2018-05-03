@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Queue;
 
+import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.commandEngine.CommandEngine;
 import io.zino.mystore.storageEngine.StringMapEngine;
 
@@ -23,7 +24,8 @@ public class NetworkRequestHandlerEngine extends Thread {
 
 	private NetworkRequestHandlerEngine() {
 		this.networkEngine = NetworkEngine.getInstance();
-		this.handlers = new NetworkRequestHandler[1];
+		int size = Integer.parseInt(ConfigMgr.getInstance().get("NetworkRequestHandlerEngine.size"));
+		this.handlers = new NetworkRequestHandler[size];
 		for (int i = 0; i < handlers.length; i++) {
 			handlers[i] = new NetworkRequestHandler(this.networkEngine.getSokects());
 		}
@@ -65,6 +67,15 @@ public class NetworkRequestHandlerEngine extends Thread {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				} else {
+					synchronized (this.requestQueue) {
+						try {
+							this.requestQueue.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					
 				}
 			}
 		}
