@@ -1,15 +1,12 @@
-NetworkEngine.port=20509
-NetworkRequestHandlerEngine.size=10
+NetworkEngine.port=12341
+NetworkRequestHandlerEngine.size=2
 
-ClusterEngine.node.id=nodeX304
-ClusterEngine.node.port=20510
+ClusterEngine.node.id=nodeX1
+ClusterEngine.node.port=12351
 
-ClusterEngine.adjNodeCount=2
+ClusterEngine.adjNodeCount=1
 
-ClusterEngine.node.1.nodeUid=nodeX1
+ClusterEngine.node.1.nodeUid=nodeX2
 ClusterEngine.node.1.address=localhost
-ClusterEngine.node.1.port=12341
+ClusterEngine.node.1.port=12352
 
-ClusterEngine.node.2.nodeUid=nodeX2
-ClusterEngine.node.2.address=localhost
-ClusterEngine.node.2.port=12342

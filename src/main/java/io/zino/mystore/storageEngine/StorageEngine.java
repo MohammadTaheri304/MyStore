@@ -77,6 +77,7 @@ public class StorageEngine {
 	
 	public String get(String key){
 		StorageEntry entry = this.data.get(key);
+		if(entry==null) return null;
 		if(entry.getNodeId().equals(ClusterEngine.NODE_ID)){
 			return entry.getData();
 		}else{

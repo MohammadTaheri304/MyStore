@@ -1,8 +1,10 @@
 package io.zino.mystore.clusterEngine;
 
+import java.io.Serializable;
+
 import io.zino.mystore.storageEngine.StorageEntry;
 
-public class ClusterRequest {
+public class ClusterRequest implements Serializable{
 	public enum RequestType{
 		UPDATE, ADD, DELETE, GET;
 	}

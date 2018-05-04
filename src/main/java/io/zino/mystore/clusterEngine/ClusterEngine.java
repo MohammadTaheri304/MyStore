@@ -37,25 +37,28 @@ public class ClusterEngine extends Thread {
 	}
 
 	public StorageEntry getRequest(StorageEntry storageEntry) {
-		return this.sendRequest(new ClusterRequest(RequestType.GET, storageEntry));
+		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.GET, storageEntry));
 	}
 
 	public StorageEntry addRequest(StorageEntry storageEntry) {
-		return this.sendRequest(new ClusterRequest(RequestType.ADD, storageEntry));
+		nodeMap.keySet().forEach(nodeId-> this.sendRequest(nodeId, new ClusterRequest(RequestType.ADD, storageEntry)));
+		return storageEntry;
 	}
 
 	public StorageEntry updateRequest(StorageEntry storageEntry) {
-		return this.sendRequest(new ClusterRequest(RequestType.UPDATE, storageEntry));
+		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.UPDATE, storageEntry));
 	}
 
 	public StorageEntry deleteRequest(StorageEntry storageEntry) {
-		return this.sendRequest(new ClusterRequest(RequestType.DELETE, storageEntry));
+		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.DELETE, storageEntry));
 	}
 
-	private StorageEntry sendRequest(ClusterRequest request) {
-		ClusterNode dest = nodeMap.get(request.getStorageEntry().getNodeId());
+	private StorageEntry sendRequest(String destId, ClusterRequest request) {
+		ClusterNode dest = nodeMap.get(destId);
 		try {
 			Socket clientSocket = new Socket(dest.getAddress(), dest.getPort());
+			if(clientSocket==null) return null;
+			
 			ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 			ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
 
