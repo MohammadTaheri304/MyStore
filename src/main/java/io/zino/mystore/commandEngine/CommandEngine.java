@@ -2,11 +2,11 @@ package io.zino.mystore.commandEngine;
 
 import java.util.Scanner;
 
-import io.zino.mystore.storageEngine.StringMapEngine;
+import io.zino.mystore.storageEngine.StorageEngine;
 
 public class CommandEngine {
 	public static String query(String query) {
-		StringMapEngine stringMapEngine = StringMapEngine.getInstance();
+		StorageEngine stringMapEngine = StorageEngine.getInstance();
 	
 		Scanner in = new Scanner(query);
 		String call = in.next().toUpperCase();

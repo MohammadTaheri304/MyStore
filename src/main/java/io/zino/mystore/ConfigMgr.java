@@ -1,8 +1,10 @@
 package io.zino.mystore;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class ConfigMgr {
@@ -16,7 +18,12 @@ public class ConfigMgr {
 	private ConfigMgr() {
 		this.prop = new Properties();
 		try {
-			prop.load(this.getClass().getResourceAsStream("config"));
+			File file = new File("config");
+			if(file.exists()){
+				prop.load(new FileInputStream(file));
+			}else{
+				prop.load(this.getClass().getResourceAsStream("config"));
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -42,7 +42,6 @@ public class NetworkEngine extends Thread{
 				System.out.println("new socket added to socket queue");
 			}	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
