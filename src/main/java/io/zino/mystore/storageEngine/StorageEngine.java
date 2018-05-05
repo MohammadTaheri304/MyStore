@@ -20,14 +20,14 @@ public class StorageEngine {
 		System.out.println("StringMapEngine Started! "+System.currentTimeMillis());
 	}
 	
-	public boolean insert(String key, String value){
+	public QueryResult insert(String key, String value){
 		if(!this.data.containsKey(key)){
 			StorageEntry storageEntry = new StorageEntry(key, value);
 			this.data.put(key, storageEntry);
 			ClusterEngine.getInstance().addRequest(storageEntry);
-			return true;
+			return new QueryResult(null, null, "INSERT_TRUE");
 		}
-		return false;
+		return new QueryResult(null, null, "INSERT_FALSE");
 	}
 	
 	public StorageEntry get(StorageEntry storageEntry){
@@ -59,7 +59,7 @@ public class StorageEngine {
 		return null;
 	}
 
-	public boolean update(String key, String value){
+	public QueryResult update(String key, String value){
 		if(this.data.containsKey(key)){
 			StorageEntry entry = this.data.get(key);
 			if(entry.getNodeId().equals(ClusterEngine.NODE_ID)){
@@ -70,40 +70,40 @@ public class StorageEngine {
 				StorageEntry updateRequest = ClusterEngine.getInstance().updateRequest(clone);
 				this.data.replace(updateRequest.getKey(), updateRequest);
 			}
-			return true;
+			return new QueryResult(null, null, "UPDATE_TRUE");
 		}
-		return false;
+		return new QueryResult(null, null, "UPDATE_FALSE");
 	}
 	
-	public String get(String key){
+	public QueryResult get(String key){
 		StorageEntry entry = this.data.get(key);
 		if(entry==null) return null;
 		if(entry.getNodeId().equals(ClusterEngine.NODE_ID)){
-			return entry.getData();
+			return new QueryResult(key, entry.getData(), "GET_TRUE");
 		}else{
 			StorageEntry clone = entry.clone();
 			StorageEntry getRequest = ClusterEngine.getInstance().getRequest(clone);
 			this.data.replace(getRequest.getKey(), getRequest);
-			return getRequest.getData();
+			return new QueryResult(key, getRequest.getData(), "GET_TRUE");
 		}
 	}
 	
-	public boolean exist(String key){
+	public QueryResult exist(String key){
 		StorageEntry entry = this.data.get(key);
 		if(entry.getNodeId().equals(ClusterEngine.NODE_ID)){
-			return true;
+			return new QueryResult(null, null, "EXIST_TRUE");
 		}else{
 			StorageEntry clone = entry.clone();
 			StorageEntry getRequest = ClusterEngine.getInstance().getRequest(clone);
 			if(getRequest.getKey()!=null){
 				this.data.replace(getRequest.getKey(), getRequest);
-				return true;
+				return new QueryResult(null, null, "EXIST_TRUE");
 			}
 		}
-		return false;
+		return new QueryResult(null, null, "EXIST_FALSE");
 	}
 	
-	public boolean delete(String key){		
+	public QueryResult delete(String key){		
 		if(this.data.containsKey(key)){
 			StorageEntry entry = this.data.get(key);
 			if(entry.getNodeId().equals(ClusterEngine.NODE_ID)){
@@ -113,8 +113,8 @@ public class StorageEngine {
 				ClusterEngine.getInstance().deleteRequest(clone);
 				this.data.remove(key);
 			}
-			return true;
+			return new QueryResult(null, null, "DELETE_TRUE");
 		}
-		return false;
+		return new QueryResult(null, null, "DELETE_FALSE");
 	}
 }

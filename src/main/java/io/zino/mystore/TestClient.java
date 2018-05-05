@@ -13,7 +13,7 @@ public class TestClient {
 
 		TestClient client = new TestClient();
 		try {
-			client.startConnection("localhost", 12342);
+			client.startConnection("localhost", 12341);
 			while (true) {
 				String sendMessage = client.sendMessage(new Scanner(System.in).nextLine());
 				System.out.println("client recive :: " + sendMessage);

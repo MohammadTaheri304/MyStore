@@ -1,4 +1,3 @@
 MGET
-return json for client
 make hierarchy memory
 optimize clusterEngine communication
