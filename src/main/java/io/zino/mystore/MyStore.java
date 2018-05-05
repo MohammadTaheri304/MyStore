@@ -15,6 +15,7 @@ public class MyStore {
 		NetworkRequestHandlerEngine.getInstance();
 		ClusterEngine.getInstance();
 		
+		
 		System.out.println("MyStore Started! "+System.currentTimeMillis());
 	}
 }
