@@ -11,8 +11,8 @@ public class StorageEntry implements Serializable {
 	private String nodeId;
 	
 	//use two below for memory hir.
-	private long lastAccess;
-	private long touchCount;
+	private long lastAccess=0;
+	private long touchCount=0;
 
 	private void touch(){
 		this.touchCount++;
@@ -77,4 +77,5 @@ public class StorageEntry implements Serializable {
 		 clone.lastAccess = this.lastAccess;
 		 return clone;
 	}
+	
 }
