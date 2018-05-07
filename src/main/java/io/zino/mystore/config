@@ -1,12 +1,15 @@
+MemoryStorageEngine.size=10
+
+FileStorageEngine.upgradeAgingThreshold=0.001
+
 NetworkEngine.port=12341
 NetworkRequestHandlerEngine.size=2
 
 ClusterEngine.node.id=nodeX1
 ClusterEngine.node.port=12351
 
-ClusterEngine.adjNodeCount=1
+ClusterEngine.adjNodeCount=0
 
-ClusterEngine.node.1.nodeUid=nodeX2
-ClusterEngine.node.1.address=localhost
-ClusterEngine.node.1.port=12352
-
+# ClusterEngine.node.1.nodeUid=nodeX2
+# ClusterEngine.node.1.address=localhost
+# ClusterEngine.node.1.port=12352

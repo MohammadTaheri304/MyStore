@@ -9,7 +9,16 @@ public class StorageEntry implements Serializable {
 	private String key;
 	private String data;
 	private String nodeId;
+	
+	//use two below for memory hir.
+	private long lastAccess=0;
+	private long touchCount=1;
 
+	private void touch(){
+		this.touchCount++;
+		this.lastAccess = System.currentTimeMillis();
+	}
+	
 	public StorageEntry(String key, String data) {
 		this(0l, key, data);
 	}
@@ -30,10 +39,12 @@ public class StorageEntry implements Serializable {
 	}
 
 	public String getData() {
+		this.touch();
 		return data;
 	}
 
 	public StorageEntry updateData(String data) {
+		this.touch();
 		this.version++;
 		this.data = data;
 		return this;
@@ -51,8 +62,20 @@ public class StorageEntry implements Serializable {
 		return nodeId;
 	}
 	
+	public long getLastAccess() {
+		return lastAccess;
+	}
+
+	public long getTouchCount() {
+		return touchCount;
+	}
+
 	@Override
 	protected StorageEntry clone() {
-		return new StorageEntry(this.version, this.getNodeId(), this.getKey(), this.getData());
+		 StorageEntry clone = new StorageEntry(this.version, this.getNodeId(), this.getKey(), this.getData());
+		 clone.touchCount = this.touchCount;
+		 clone.lastAccess = this.lastAccess;
+		 return clone;
 	}
+	
 }

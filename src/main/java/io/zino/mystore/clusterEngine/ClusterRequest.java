@@ -10,7 +10,12 @@ public class ClusterRequest implements Serializable{
 	}
 	
 	private RequestType requestType;
-	private StorageEntry storageEntry;
+	
+	private long version;
+	private String key;
+	private String data;
+	private String nodeId;
+	
 	public RequestType getRequestType() {
 		return requestType;
 	}
@@ -18,14 +23,17 @@ public class ClusterRequest implements Serializable{
 		this.requestType = requestType;
 	}
 	public StorageEntry getStorageEntry() {
-		return storageEntry;
+		return new StorageEntry(version, nodeId, key, data);
 	}
 	public void setStorageEntry(StorageEntry storageEntry) {
-		this.storageEntry = storageEntry;
+		this.version = storageEntry.getVersion();
+		this.key = storageEntry.getKey();
+		this.data = storageEntry.getData();
+		this.nodeId = storageEntry.getNodeId();
 	}
 	public ClusterRequest(RequestType requestType, StorageEntry storageEntry) {
 		super();
 		this.requestType = requestType;
-		this.storageEntry = storageEntry;
+		this.setStorageEntry(storageEntry);
 	}
 }
