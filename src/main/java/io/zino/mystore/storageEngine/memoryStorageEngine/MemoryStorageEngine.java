@@ -1,16 +1,17 @@
-package io.zino.mystore.storageEngine;
+package io.zino.mystore.storageEngine.memoryStorageEngine;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.zino.mystore.ConfigMgr;
+import io.zino.mystore.storageEngine.StorageEntry;
+import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 
 public class MemoryStorageEngine extends Thread {
 
 	private static MemoryStorageEngine instance = new MemoryStorageEngine();
 	private Map<String, StorageEntry> data;
-	private FileStorageEngine fileStorageEngine;
 
 	public static MemoryStorageEngine getInstance() {
 		return instance;
@@ -18,7 +19,6 @@ public class MemoryStorageEngine extends Thread {
 
 	private MemoryStorageEngine() {
 		data = new ConcurrentHashMap<String, StorageEntry>();
-		this.fileStorageEngine = FileStorageEngine.getInstance();
 		this.start();
 
 		System.out.println("MemoryStorageEngine Started! " + System.currentTimeMillis());
@@ -26,6 +26,7 @@ public class MemoryStorageEngine extends Thread {
 
 	@Override
 	public void run() {
+		int configSize = Integer.parseInt(ConfigMgr.getInstance().get("MemoryStorageEngine.size"));
 		long sleepDuration = 2500;
 		while (true) {
 			try {
@@ -36,20 +37,17 @@ public class MemoryStorageEngine extends Thread {
 			}
 
 			int dataSize = this.data.size();
-			int configSize = Integer.parseInt(ConfigMgr.getInstance().get("MemoryStorageEngine.size"));
 			if (dataSize > (configSize * (0.8))) {
 				sleepDuration *= (0.8);
 
 				double sumOfages = 0;
 				for (Entry<String, StorageEntry> entry : this.data.entrySet()) {
-					long idealTime = System.currentTimeMillis() - entry.getValue().getLastAccess();
-					double aging = entry.getValue().getTouchCount()/idealTime;
+					double aging = evalAging(entry);
 					sumOfages += aging;
 				}
 				double agingThresh = sumOfages/(this.data.size());
 				for (Entry<String, StorageEntry> entry : this.data.entrySet()) {
-					long idealTime = System.currentTimeMillis() - entry.getValue().getLastAccess();
-					double aging = entry.getValue().getTouchCount()/idealTime ;
+					double aging = evalAging(entry);
 					if(aging<=agingThresh){
 						this.data.remove(entry.getKey());
 						this.downgarde(entry.getValue());
@@ -62,8 +60,15 @@ public class MemoryStorageEngine extends Thread {
 		}
 	}
 
+	private double evalAging(Entry<String, StorageEntry> entry) {
+		long idealTime = System.currentTimeMillis() - entry.getValue().getLastAccess();
+		double aging = entry.getValue().getTouchCount()/(idealTime+1);
+		return aging;
+	}
+
 	private void downgarde(StorageEntry storageEntry){
-		this.fileStorageEngine.insert(storageEntry);
+		FileStorageEngine.getInstance().insert(storageEntry);
+		System.out.println("###");
 	}
 	
 	public boolean containsKey(String key) {

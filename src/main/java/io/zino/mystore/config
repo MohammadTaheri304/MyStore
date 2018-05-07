@@ -1,5 +1,7 @@
 MemoryStorageEngine.size=10
 
+FileStorageEngine.upgradeAgingThreshold=0.001
+
 NetworkEngine.port=12341
 NetworkRequestHandlerEngine.size=2
 

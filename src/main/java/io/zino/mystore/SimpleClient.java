@@ -6,25 +6,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
-public class TestClient {
+public class SimpleClient {
 	public static void main(String[] args) {
 
-		TestClient client = new TestClient();
+		SimpleClient client = new SimpleClient();
 		try {
 			client.startConnection("localhost", 12341);
 			while (true) {
-				String sendMessage = client.sendMessage("add "+Random()+" qecwvr"+Math.random());
-				//System.out.println("client recive :: " + sendMessage);
-				
-				String sendMessage2 = client.sendMessage("get "+Random());
-				//System.out.println("client recive :: " + sendMessage2);
-				
-				String sendMessage3 = client.sendMessage("update "+Random()+" qdecwc"+Math.random());
-				//System.out.println("client recive :: " + sendMessage3);
-				
-				String sendMessage4 = client.sendMessage("delete "+Random());
-				//System.out.println("client recive :: " + sendMessage4);
+				String sendMessage = client.sendMessage(new Scanner(System.in).nextLine());
+				System.out.println("client recive :: " + sendMessage);
 			}
 			// client.stopConnection();
 		} catch (UnknownHostException e) {
@@ -37,10 +29,6 @@ public class TestClient {
 
 	}
 
-	private static int Random(){
-		return (int)(Math.random()*1000000)%100;
-	}
-	
 	private Socket clientSocket;
 	private PrintWriter out;
 	private BufferedReader in;

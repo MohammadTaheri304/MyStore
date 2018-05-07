@@ -12,7 +12,7 @@ public class StorageEntry implements Serializable {
 	
 	//use two below for memory hir.
 	private long lastAccess=0;
-	private long touchCount=0;
+	private long touchCount=1;
 
 	private void touch(){
 		this.touchCount++;
