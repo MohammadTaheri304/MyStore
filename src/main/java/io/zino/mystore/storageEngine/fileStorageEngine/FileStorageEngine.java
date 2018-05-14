@@ -1,5 +1,9 @@
 package io.zino.mystore.storageEngine.fileStorageEngine;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,12 +17,39 @@ public class FileStorageEngine extends Thread {
 	private static FileStorageEngine instance = new FileStorageEngine();
 	private Map<String, StorageEntry> data;
 	
+	private IndexFileEngine indexFileEngine;
+	private DBFileEngine dbFileEngine;
+	
+	private RandomAccessFile getFileAccess(String fileadrs) {
+		File file = new File(fileadrs);
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		RandomAccessFile raf = null;
+		try {
+			raf = new RandomAccessFile(file, "rw");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return raf;
+	}
+	
 	public static FileStorageEngine getInstance() {
 		return instance;
 	}
 
 	private FileStorageEngine() {
 		data = new ConcurrentHashMap<String, StorageEntry>();
+		
+
+		this.dbFileEngine.dbFile = this.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbFile"));
+		this.indexFileEngine.dbIndexFile = this
+				.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbIndexFile"));
 		
 		this.start();
 
