@@ -2,12 +2,35 @@ package io.zino.mystore.storageEngine.fileStorageEngine;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.instrument.Instrumentation;
 
 import io.zino.mystore.storageEngine.StorageEntry;
 
 public class DBFileEngine {
+	private static Instrumentation instrumentation;
+	public static long writeHead = 0L;
+	public static int dirtyEntry=0;
+	
 	RandomAccessFile dbFile;
 
+	public static long entrySize(StorageEntry entry) {
+		long size=0;
+		size += Long.BYTES ;//Version
+		size += Long.BYTES ;//LastAccess
+		size += Long.BYTES ;//TouchCount
+
+		size += Integer.BYTES ;//NodeId lenght
+		size += Character.BYTES*entry.getNodeId().length() ;//NodeId
+
+		size += Integer.BYTES ;//Key lenght
+		size += Character.BYTES*entry.getKey().length() ;//Key
+		
+		size += Integer.BYTES ;//Data lenght
+		size += Character.BYTES*entry.getData().length() ;//Data
+		
+		return size;
+	}
+	
 	StorageEntry loadEntry(long head) {
 		try {
 			this.dbFile.seek(head);
@@ -33,7 +56,15 @@ public class DBFileEngine {
 		return new String(bytes);
 	}
 
-	void saveEntry(long head, StorageEntry entry) {
+	private long saveEntry(StorageEntry entry) {
+		long size = DBFileEngine.entrySize(entry);
+		long wh = DBFileEngine.writeHead;
+		DBFileEngine.writeHead += size;
+		this.saveEntry(wh, entry);
+		return wh;
+	}		
+	
+	private void saveEntry(long head, StorageEntry entry) {		
 		try {
 			this.dbFile.seek(head);
 
