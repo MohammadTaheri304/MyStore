@@ -8,12 +8,16 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.log4j.Logger;
+
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.clusterEngine.ClusterRequest.RequestType;
 import io.zino.mystore.storageEngine.StorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 
 public class ClusterEngine extends Thread {
+	final static Logger logger = Logger.getLogger(ClusterEngine.class);
+
 	public static final String NODE_ID = ConfigMgr.getInstance().get("ClusterEngine.node.id");
 	private static ClusterEngine instance = new ClusterEngine();
 	private Map<String, ClusterNode> nodeMap;
@@ -41,7 +45,7 @@ public class ClusterEngine extends Thread {
 	}
 
 	public StorageEntry addRequest(StorageEntry storageEntry) {
-		nodeMap.keySet().forEach(nodeId-> this.sendRequest(nodeId, new ClusterRequest(RequestType.ADD, storageEntry)));
+		nodeMap.keySet().forEach(nodeId -> this.sendRequest(nodeId, new ClusterRequest(RequestType.ADD, storageEntry)));
 		return storageEntry;
 	}
 
@@ -57,8 +61,9 @@ public class ClusterEngine extends Thread {
 		ClusterNode dest = nodeMap.get(destId);
 		try {
 			Socket clientSocket = new Socket(dest.getAddress(), dest.getPort());
-			if(clientSocket==null) return null;
-			
+			if (clientSocket == null)
+				return null;
+
 			ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 			ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -67,10 +72,8 @@ public class ClusterEngine extends Thread {
 			out.close();
 			clientSocket.close();
 			return response;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException | IOException e) {
+			logger.error("Error on sending request", e);
 		}
 
 		return null;
@@ -114,10 +117,8 @@ public class ClusterEngine extends Thread {
 				out.close();
 				clientSocket.close();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException | IOException e) {
+			logger.error("Error on Cluster listener", e);
 		}
 	}
 }
