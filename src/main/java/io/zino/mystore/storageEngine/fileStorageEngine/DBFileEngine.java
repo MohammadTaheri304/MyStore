@@ -4,34 +4,25 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.instrument.Instrumentation;
 
+import org.apache.log4j.Logger;
+
 import io.zino.mystore.storageEngine.StorageEntry;
 
 public class DBFileEngine {
+	final static Logger logger = Logger.getLogger(DBFileEngine.class);
+
+	public DBFileEngine(RandomAccessFile dbFile) {
+		super();
+		this.dbFile = dbFile;
+	}
+
 	private static Instrumentation instrumentation;
-	public static long writeHead = 0L;
-	public static int dirtyEntry=0;
-	
+	private long writeHead = 1L;
+	public static int dirtyEntry = 0;
+
 	RandomAccessFile dbFile;
 
-	public static long entrySize(StorageEntry entry) {
-		long size=0;
-		size += Long.BYTES ;//Version
-		size += Long.BYTES ;//LastAccess
-		size += Long.BYTES ;//TouchCount
-
-		size += Integer.BYTES ;//NodeId lenght
-		size += Character.BYTES*entry.getNodeId().length() ;//NodeId
-
-		size += Integer.BYTES ;//Key lenght
-		size += Character.BYTES*entry.getKey().length() ;//Key
-		
-		size += Integer.BYTES ;//Data lenght
-		size += Character.BYTES*entry.getData().length() ;//Data
-		
-		return size;
-	}
-	
-	StorageEntry loadEntry(long head) {
+	synchronized StorageEntry loadEntry(long head) {
 		try {
 			this.dbFile.seek(head);
 
@@ -44,27 +35,33 @@ public class DBFileEngine {
 
 			return new StorageEntry(version, nodeId, key, data, lastAccess, touchCount);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error on load Entry with Head " + head, e);
 		}
 		return null;
 	}
 
 	private String loadString() throws IOException {
+		StringBuilder sb = new StringBuilder();
 		int size = this.dbFile.readInt();
-		byte[] bytes = new byte[Character.BYTES * size];
-		this.dbFile.read(bytes);
-		return new String(bytes);
+		for (int i = 0; i < size; i++) {
+			sb.append(this.dbFile.readChar());
+		}
+		return sb.toString();
 	}
 
-	private long saveEntry(StorageEntry entry) {
-		long size = DBFileEngine.entrySize(entry);
-		long wh = DBFileEngine.writeHead;
-		DBFileEngine.writeHead += size;
-		this.saveEntry(wh, entry);
+	synchronized long saveEntry(StorageEntry entry) {
+		final long wh = this.writeHead;
+		final long size = this.saveEntry(wh, entry);
+		if(size==-1){
+			logger.debug("saveEntry Failed! "+entry.toString());
+			return -1l;
+		}
+		this.writeHead += size;
+		logger.debug("save Entry with key " + entry.getKey() + " with Head " + wh + " end is " + this.writeHead);
 		return wh;
-	}		
-	
-	private void saveEntry(long head, StorageEntry entry) {		
+	}
+
+	private long saveEntry(long head, StorageEntry entry) {
 		try {
 			this.dbFile.seek(head);
 
@@ -76,14 +73,18 @@ public class DBFileEngine {
 			this.saveString(entry.getKey());
 			this.saveString(entry.getData());
 
+			return this.dbFile.getFilePointer() - head;
+
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error on saving on Head " + head + " Entry: " + entry.toString(), e);
+			return -1l;
 		}
 	}
 
 	private void saveString(String string) throws IOException {
 		this.dbFile.writeInt(string.length());
-		this.dbFile.writeChars(string);
+		for (int c : string.toCharArray())
+			this.dbFile.writeChar(c);
 	}
 
 }
