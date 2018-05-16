@@ -1,18 +1,13 @@
 package io.zino.mystore.networkEngine;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Queue;
+import org.apache.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
-import io.zino.mystore.commandEngine.CommandEngine;
 import io.zino.mystore.storageEngine.StorageEngine;
 
-public class NetworkRequestHandlerEngine extends Thread {
-
+public class NetworkRequestHandlerEngine{
+	final static Logger logger = Logger.getLogger(NetworkRequestHandlerEngine.class);
+	
 	private static NetworkRequestHandlerEngine instance = new NetworkRequestHandlerEngine();
 	private NetworkEngine networkEngine;
 	private StorageEngine stringMapEngine;
@@ -30,15 +25,7 @@ public class NetworkRequestHandlerEngine extends Thread {
 			handlers[i] = new NetworkRequestHandler(this.networkEngine.getSokects());
 		}
 
-		this.start();
-
 		System.out.println("NetworkRequestHandlerEngine Started! " + System.currentTimeMillis());
 	}
-
-	@Override
-	public void run() {
-		//TODO what to do?
-	}
-
 	
 }
