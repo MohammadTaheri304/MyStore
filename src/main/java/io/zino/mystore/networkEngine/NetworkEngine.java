@@ -6,9 +6,12 @@ import java.net.Socket;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.apache.log4j.Logger;
+
 import io.zino.mystore.ConfigMgr;
 
 public class NetworkEngine extends Thread{
+	final static Logger logger = Logger.getLogger(NetworkEngine.class);
 
 	private static NetworkEngine instance = new NetworkEngine();
 	private Queue<Socket> sockets;
@@ -42,7 +45,7 @@ public class NetworkEngine extends Thread{
 				System.out.println("new socket added to socket queue");
 			}	
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error on accept new socket!", e);
 		}
 	}
 
