@@ -1,58 +1,65 @@
 package io.zino.mystore.storageEngine;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.log4j.Logger;
 
 import io.zino.mystore.clusterEngine.ClusterEngine;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 
-public class StorageEngine {
+public class StorageEngine extends AbstractStorageEngine{
 
-	private static StorageEngine instance = new StorageEngine();
-	private Map<String, StorageEntry> data;
-	private MemoryStorageEngine memoryStorageEngine = MemoryStorageEngine.getInstance();
-	private FileStorageEngine fileStorageEngine = FileStorageEngine.getInstance();
+	final static Logger logger = Logger.getLogger(StorageEngine.class);
 	
+	private static StorageEngine instance = new StorageEngine();
+	private MemoryStorageEngine memoryStorageEngine;
+	private FileStorageEngine fileStorageEngine;
+
 	public static StorageEngine getInstance() {
 		return instance;
 	}
 
 	private StorageEngine() {
-		data = new ConcurrentHashMap<String, StorageEntry>();
+		this.memoryStorageEngine = MemoryStorageEngine.getInstance();
+		this.fileStorageEngine = FileStorageEngine.getInstance();
 
 		System.out.println("StringMapEngine Started! " + System.currentTimeMillis());
 	}
 
+	@Override
 	public StorageEntry get(StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.get(storageEntry);
-		if(se!=null){
+		if (se != null)
 			return se;
-		}else{
-			return fileStorageEngine.get(storageEntry);
-		}
+		return fileStorageEngine.get(storageEntry);
 	}
 
+	@Override
 	public StorageEntry insert(StorageEntry storageEntry) {
 		return memoryStorageEngine.insert(storageEntry);
 	}
 
+	@Override
 	public StorageEntry update(StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.update(storageEntry);
-		if(se!=null){
+		if (se != null)
 			return se;
-		}else{
-			return fileStorageEngine.update(storageEntry);
-		}
+		return fileStorageEngine.update(storageEntry);
 	}
 
+	@Override
 	public StorageEntry delete(StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.delete(storageEntry);
-		if(se!=null){
+		if (se != null)
 			return se;
-		}else{
-			return fileStorageEngine.delete(storageEntry);
-		}
+		return fileStorageEngine.delete(storageEntry);
+	}
+	
+	@Override
+	public boolean containsKey(StorageEntry key) {
+		boolean se = memoryStorageEngine.containsKey(key);
+		if (se)
+			return se;
+		return fileStorageEngine.containsKey(key);
 	}
 
 	public QueryResult insert(String key, String value) {
@@ -61,9 +68,8 @@ public class StorageEngine {
 		if (se != null) {
 			ClusterEngine.getInstance().addRequest(storageEntry);
 			return new QueryResult(null, null, "INSERT_TRUE");
-		} else {
-			return new QueryResult(null, null, "INSERT_FALSE");
 		}
+		return new QueryResult(null, null, "INSERT_FALSE");
 	}
 
 	public QueryResult update(String key, String value) {
@@ -71,22 +77,25 @@ public class StorageEngine {
 		StorageEntry se = this.get(storageEntry);
 		if (se != null) {
 			if (se.getNodeId().equals(ClusterEngine.NODE_ID)) {
-				this.update(storageEntry);
-				return new QueryResult(se.getKey(), se.getData(), "UPDATE_TRUE");
+				StorageEntry updateres = this.update(storageEntry);
+				if (updateres != null)
+					return new QueryResult(se.getKey(), se.getData(), "UPDATE_TRUE");
+				else
+					return new QueryResult(null, null, "UPDATE_FALSE");
 			} else {
 				StorageEntry clone = se.clone();
 				clone.updateData(value);
 				StorageEntry updateRequest = ClusterEngine.getInstance().updateRequest(clone);
 				if (updateRequest != null) {
 					this.update(updateRequest);
-					return new QueryResult(updateRequest.getKey(), updateRequest.getData(), "GET_TRUE");
+					return new QueryResult(updateRequest.getKey(), updateRequest.getData(), "UPDATE_TRUE");
 				} else {
 					this.delete(clone);
 					return new QueryResult(null, null, "UPDATE_FALSE");
 				}
 			}
-		}
-		return new QueryResult(null, null, "UPDATE_FALSE");
+		} else
+			return new QueryResult(null, null, "UPDATE_FALSE");
 	}
 
 	public QueryResult get(String key) {
@@ -94,9 +103,9 @@ public class StorageEngine {
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
 			return new QueryResult(null, null, "GET_FALSE");
-		if (se.getNodeId().equals(ClusterEngine.NODE_ID)) {
+		else if (se.getNodeId().equals(ClusterEngine.NODE_ID))
 			return new QueryResult(se.getKey(), se.getData(), "GET_TRUE");
-		} else {
+		else {
 			StorageEntry clone = se.clone();
 			StorageEntry getRequest = ClusterEngine.getInstance().getRequest(clone);
 			if (getRequest != null) {
@@ -114,9 +123,9 @@ public class StorageEngine {
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
 			return new QueryResult(null, null, "EXIST_FALSE");
-		if (se.getNodeId().equals(ClusterEngine.NODE_ID)) {
+		else if (se.getNodeId().equals(ClusterEngine.NODE_ID))
 			return new QueryResult(null, null, "EXIST_TRUE");
-		} else {
+		else {
 			StorageEntry clone = se.clone();
 			StorageEntry getRequest = ClusterEngine.getInstance().getRequest(clone);
 			if (getRequest != null) {
@@ -126,13 +135,15 @@ public class StorageEngine {
 				this.delete(clone);
 				return new QueryResult(null, null, "EXIST_FALSE");
 			}
-		}	
+		}
 	}
 
 	public QueryResult delete(String key) {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
-		if (se!=null) {
+		if (se == null)
+			return new QueryResult(null, null, "DELETE_FALSE");
+		else {
 			if (se.getNodeId().equals(ClusterEngine.NODE_ID)) {
 				this.delete(se);
 				return new QueryResult(null, null, "DELETE_TRUE");
@@ -141,8 +152,8 @@ public class StorageEngine {
 				ClusterEngine.getInstance().deleteRequest(clone);
 				this.delete(clone);
 				return new QueryResult(null, null, "DELETE_TRUE");
-			}		
+			}
 		}
-		return new QueryResult(null, null, "DELETE_FALSE");
 	}
+
 }
