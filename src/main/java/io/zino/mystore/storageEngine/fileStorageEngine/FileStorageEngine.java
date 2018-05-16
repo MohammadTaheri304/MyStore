@@ -71,12 +71,13 @@ public class FileStorageEngine extends AbstractStorageEngine {
 			boolean decSleppDuration = false;
 
 			long item = 0L;
-			IndexEntry indexEntry = this.indexFileEngine.getIndexEntry(item);
+			Long indexEntry = this.indexFileEngine.getIndexEntry(item);
 			while (indexEntry != null) {
 				item++;
-				if (indexEntry.count != 1l)
+				if (indexEntry==-1) {
 					continue;
-				StorageEntry entry = this.dbFileEngine.loadEntry(indexEntry.head);
+				}
+				StorageEntry entry = this.dbFileEngine.loadEntry(indexEntry);
 				long idealTime = System.currentTimeMillis() - entry.getLastAccess();
 				double aging = entry.getTouchCount() / (idealTime + 1);
 				if (aging >= agingThreshold) {
@@ -101,8 +102,8 @@ public class FileStorageEngine extends AbstractStorageEngine {
 
 	@Override
 	public StorageEntry get(StorageEntry storageEntry) {
-		long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());
-		if (address == -1l || address == 0l)
+		Long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());
+		if (address==null || address == -1l || address == 0l)
 			return null;
 		StorageEntry loadEntry = this.dbFileEngine.loadEntry(address);
 		if (loadEntry != null && storageEntry.getKey().equals(loadEntry.getKey())) {

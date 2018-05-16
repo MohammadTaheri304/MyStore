@@ -21,6 +21,73 @@ public class TestClient {
 	private static void runCliClient() {
 		Map<String, String> map = new HashMap<>();
 		TestClient client = new TestClient();
+		
+		String base = "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr" 
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr"
+		+ "qecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvrqecwvr";
+		
 		try {
 			client.startConnection("localhost", 12341);
 			long count=0;
@@ -28,7 +95,7 @@ public class TestClient {
 				count++;
 				{
 					String key = Random() + "";
-					String value = "qecwvr" + Math.random();
+					String value = base + Math.random();
 					String sendMessage = client.sendMessage("add " + key + " " + value);
 					System.out.println((!map.containsKey(key))+" client recive :: " + sendMessage);
 					map.put(key, value);
@@ -55,14 +122,14 @@ public class TestClient {
 					map.remove(key);
 				}
 				
-				if(count%1000==0){
-					try {
-						Thread.sleep(1000L);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+//				if(count%10000==0){
+//					try {
+//						Thread.sleep(1000L);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
 			}
 			// client.stopConnection();
 		} catch (UnknownHostException e) {
@@ -73,7 +140,7 @@ public class TestClient {
 	}
 
 	private static int Random() {
-		return (int) (Math.random() * 10000000) % 10000;
+		return (int) (Math.random() * 10000000) % 1000000;
 	}
 
 	private Socket clientSocket;

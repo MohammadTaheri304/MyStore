@@ -35,6 +35,8 @@ public class StorageEngine extends AbstractStorageEngine{
 
 	@Override
 	public StorageEntry insert(StorageEntry storageEntry) {
+		boolean containsKey = this.containsKey(storageEntry);
+		if(containsKey) return null;
 		return memoryStorageEngine.insert(storageEntry);
 	}
 
