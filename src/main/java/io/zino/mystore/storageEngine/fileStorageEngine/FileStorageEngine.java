@@ -4,22 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
+import io.zino.mystore.storageEngine.AbstractStorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 
-public class FileStorageEngine extends Thread {
-
+public class FileStorageEngine extends AbstractStorageEngine {
+	final static Logger logger = Logger.getLogger(FileStorageEngine.class);
 	private static FileStorageEngine instance = new FileStorageEngine();
-	private Map<String, StorageEntry> data;
-	
+
 	private IndexFileEngine indexFileEngine;
 	private DBFileEngine dbFileEngine;
-	
+
 	private RandomAccessFile getFileAccess(String fileadrs) {
 		File file = new File(fileadrs);
 		if (!file.exists()) {
@@ -38,45 +37,54 @@ public class FileStorageEngine extends Thread {
 
 		return raf;
 	}
-	
+
 	public static FileStorageEngine getInstance() {
 		return instance;
 	}
 
 	private FileStorageEngine() {
-		data = new ConcurrentHashMap<String, StorageEntry>();
-		
+		this.dbFileEngine = new DBFileEngine(
+				this.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbFile")));
+		this.indexFileEngine = new IndexFileEngine(
+				this.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbIndexFile")));
 
-		this.dbFileEngine.dbFile = this.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbFile"));
-		this.indexFileEngine.dbIndexFile = this
-				.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbIndexFile"));
-		
-		this.start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				evalForUpgrade();
+			}
+		}).start();
 
 		System.out.println("FileStorageEngine Started! " + System.currentTimeMillis());
 	}
 
-	@Override
-	public void run() {
+	private void evalForUpgrade() {
 		long sleepDuration = 10000;
 		double agingThreshold = Double
 				.parseDouble(ConfigMgr.getInstance().get("FileStorageEngine.upgradeAgingThreshold"));
 		while (true) {
 			try {
-				this.sleep(sleepDuration);
+				Thread.sleep(sleepDuration);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			boolean decSleppDuration = false;
-			for (Entry<String, StorageEntry> entry : this.data.entrySet()) {
-				long idealTime = System.currentTimeMillis() - entry.getValue().getLastAccess();
-				double aging = entry.getValue().getTouchCount() / (idealTime+1);
+
+			long item = 0L;
+			IndexEntry indexEntry = this.indexFileEngine.getIndexEntry(item);
+			while (indexEntry != null) {
+				item++;
+				if (indexEntry.count != 1l)
+					continue;
+				StorageEntry entry = this.dbFileEngine.loadEntry(indexEntry.head);
+				long idealTime = System.currentTimeMillis() - entry.getLastAccess();
+				double aging = entry.getTouchCount() / (idealTime + 1);
 				if (aging >= agingThreshold) {
-					this.data.remove(entry.getKey());
-					this.upgrade(entry.getValue());
+					StorageEntry upgradeEntry = this.delete(entry);
+					this.upgrade(upgradeEntry);
 					decSleppDuration = true;
 				}
+				indexEntry = this.indexFileEngine.getIndexEntry(item);
 			}
 			sleepDuration = (long) (decSleppDuration ? sleepDuration * (0.8) : sleepDuration * (1.2));
 		}
@@ -84,38 +92,61 @@ public class FileStorageEngine extends Thread {
 
 	private void upgrade(StorageEntry storageEntry) {
 		MemoryStorageEngine.getInstance().insert(storageEntry);
-		System.out.println("@@@");
 	}
 
-	public boolean containsKey(String key) {
-		return this.data.containsKey(key);
+	@Override
+	public boolean containsKey(StorageEntry key) {
+		return (this.get(key) == null) ? false : true;
 	}
 
+	@Override
 	public StorageEntry get(StorageEntry storageEntry) {
-		if (this.data.containsKey(storageEntry.getKey())) {
-			return this.data.get(storageEntry.getKey());
+		long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());
+		if (address == -1l || address == 0l)
+			return null;
+		StorageEntry loadEntry = this.dbFileEngine.loadEntry(address);
+		if (loadEntry != null && storageEntry.getKey().equals(loadEntry.getKey())) {
+			return loadEntry;
 		}
 		return null;
 	}
 
+	@Override
 	public StorageEntry insert(StorageEntry storageEntry) {
-		if (!this.data.containsKey(storageEntry.getKey())) {
-			this.data.put(storageEntry.getKey(), storageEntry);
-			return storageEntry;
-		}
-		return null;
+		if (this.containsKey(storageEntry))
+			return null;
+		long newAddress = this.dbFileEngine.saveEntry(storageEntry);
+		if (newAddress == -1l)
+			return null;
+		this.indexFileEngine.saveAddressKey(storageEntry.getKey(), newAddress);
+		return storageEntry;
+
 	}
 
+	@Override
 	public StorageEntry update(StorageEntry storageEntry) {
-		if (this.data.containsKey(storageEntry.getKey())) {
-			return this.data.get(storageEntry.getKey()).updateData(storageEntry.getData());
-		}
-		return null;
+		StorageEntry loadEntry = this.get(storageEntry);
+		if (loadEntry == null)
+			return null;
+		loadEntry.updateData(storageEntry.getData());
+		DBFileEngine.dirtyEntry++;
+		long newAddress = this.dbFileEngine.saveEntry(loadEntry);
+		if (newAddress == -1l)
+			return null;
+		this.indexFileEngine.updateAddressKey(loadEntry.getKey(), newAddress);
+		return loadEntry;
 	}
 
+	@Override
 	public StorageEntry delete(StorageEntry storageEntry) {
-		if (this.data.containsKey(storageEntry.getKey())) {
-			return this.data.remove(storageEntry.getKey());
+		long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());
+		if (address == -1l || address == 0l)
+			return null;
+		StorageEntry loadEntry = this.dbFileEngine.loadEntry(address);
+		if (storageEntry.getKey().equals(loadEntry.getKey())) {
+			DBFileEngine.dirtyEntry++;
+			this.indexFileEngine.deleteAddressKey(storageEntry.getKey());
+			return loadEntry;
 		}
 		return null;
 	}
