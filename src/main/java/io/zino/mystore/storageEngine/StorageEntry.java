@@ -2,6 +2,8 @@ package io.zino.mystore.storageEngine;
 
 import java.io.Serializable;
 
+import org.json.JSONObject;
+
 import io.zino.mystore.clusterEngine.ClusterEngine;
 
 public class StorageEntry implements Serializable {
@@ -89,4 +91,15 @@ public class StorageEntry implements Serializable {
 		 return clone;
 	}
 	
+	@Override
+	public String toString() {
+		return new JSONObject()
+				.put("version", this.version)
+                .put("key", this.key)
+                .put("data", this.data)
+                .put("nodeId", this.nodeId)
+                .put("lastAccess", this.lastAccess)
+                .put("touchCount", this.touchCount)
+                .toString();
+	}
 }
