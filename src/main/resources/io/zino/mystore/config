@@ -1,6 +1,8 @@
-MemoryStorageEngine.size=10
+MemoryStorageEngine.size=100
 
 FileStorageEngine.upgradeAgingThreshold=0.001
+FileStorageEngine.dbFile=db.mysdb
+FileStorageEngine.dbIndexFile=db.mysidx
 
 NetworkEngine.port=12341
 NetworkRequestHandlerEngine.size=2

@@ -2,9 +2,16 @@ package io.zino.mystore.storageEngine;
 
 import java.io.Serializable;
 
+import org.json.JSONObject;
+
 import io.zino.mystore.clusterEngine.ClusterEngine;
 
 public class StorageEntry implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private long version;
 	private String key;
 	private String data;
@@ -28,10 +35,16 @@ public class StorageEntry implements Serializable {
 	}
 
 	public StorageEntry(long version, String nodeUid, String key, String data) {
+		this(version, nodeUid, key, data, 0, 1);	
+	}
+	
+	public StorageEntry(long version, String nodeUid, String key, String data, long lastAccess, long touchCount) {
 		this.version = version;
 		this.data = data;
 		this.nodeId = nodeUid;
 		this.key = key;
+		this.lastAccess = lastAccess;
+		this.touchCount = touchCount;
 	}
 
 	public long getVersion() {
@@ -78,4 +91,15 @@ public class StorageEntry implements Serializable {
 		 return clone;
 	}
 	
+	@Override
+	public String toString() {
+		return new JSONObject()
+				.put("version", this.version)
+                .put("key", this.key)
+                .put("data", this.data)
+                .put("nodeId", this.nodeId)
+                .put("lastAccess", this.lastAccess)
+                .put("touchCount", this.touchCount)
+                .toString();
+	}
 }

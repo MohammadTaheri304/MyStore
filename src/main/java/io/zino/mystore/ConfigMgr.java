@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class ConfigMgr {
+	final static Logger logger = Logger.getLogger(ConfigMgr.class);
+	
 	private static ConfigMgr instance = new ConfigMgr();
 	private Properties prop; 
 	
@@ -24,11 +27,9 @@ public class ConfigMgr {
 			}else{
 				prop.load(this.getClass().getResourceAsStream("config"));
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			logger.error("Error on loading config", e);
+		} 
 		
 		System.out.println("ConfigMgr Started! " + System.currentTimeMillis());
 	}

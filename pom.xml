@@ -23,11 +23,15 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20180130</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
 		</dependency>
 
 	</dependencies>
@@ -74,14 +78,6 @@
 			</plugins>
 		</pluginManagement>
 
-		<resources>
-			<resource>
-				<directory>src/main/java/</directory>
-				<includes>
-					<include>io/zino/mystore/config</include>
-				</includes>
-			</resource>
-		</resources>
 
 	</build>
 </project>

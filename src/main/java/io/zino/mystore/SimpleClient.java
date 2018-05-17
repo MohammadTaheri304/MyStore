@@ -20,10 +20,8 @@ public class SimpleClient {
 			}
 			// client.stopConnection();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

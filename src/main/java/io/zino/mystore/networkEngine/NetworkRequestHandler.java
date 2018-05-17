@@ -7,9 +7,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Queue;
 
+import org.apache.log4j.Logger;
+
 import io.zino.mystore.commandEngine.CommandEngine;
 
 public class NetworkRequestHandler extends Thread {
+	final static Logger logger = Logger.getLogger(NetworkRequestHandler.class);
+	
 	private Queue<Socket> requestQueue;
 
 	public NetworkRequestHandler(Queue<Socket> requestQueue) {
@@ -34,14 +38,14 @@ public class NetworkRequestHandler extends Thread {
 					}
 					this.requestQueue.add(socket);
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("error on sockets", e);
 				}
 			} else {
 				synchronized (this.requestQueue) {
 					try {
 						this.requestQueue.wait();
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						logger.error("error on wait!", e);
 					}
 				}
 				
