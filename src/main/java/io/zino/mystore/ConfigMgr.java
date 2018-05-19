@@ -2,22 +2,41 @@ package io.zino.mystore;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+/**
+ * The Class ConfigMgr.
+ */
 public class ConfigMgr {
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(ConfigMgr.class);
 	
+	/** The instance. */
 	private static ConfigMgr instance = new ConfigMgr();
+	
+	/** The prop. */
 	private Properties prop; 
 	
+	/**
+	 * Gets the single instance of ConfigMgr.
+	 *
+	 * @return single instance of ConfigMgr
+	 */
 	public static ConfigMgr getInstance() {
 		return instance;
 	}
 	
+	/**
+	 * Instantiates a new config mgr.
+	 * load prop from config file.
+	 * if config file exist next to jar file, then use it
+	 * otherwise use built-in config file.
+	 * System.exit on any IOException.
+	 */
 	private ConfigMgr() {
 		this.prop = new Properties();
 		try {
@@ -29,11 +48,18 @@ public class ConfigMgr {
 			}
 		} catch (IOException e) {
 			logger.error("Error on loading config", e);
+			System.exit(-1);
 		} 
 		
 		System.out.println("ConfigMgr Started! " + System.currentTimeMillis());
 	}
 	
+	/**
+	 * Gets the.
+	 *
+	 * @param key the key
+	 * @return the string
+	 */
 	public String get(String key){
 		return this.prop.getProperty(key);
 	}

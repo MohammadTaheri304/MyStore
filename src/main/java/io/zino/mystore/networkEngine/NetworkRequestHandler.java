@@ -11,17 +11,32 @@ import org.apache.log4j.Logger;
 
 import io.zino.mystore.commandEngine.CommandEngine;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class NetworkRequestHandler.
+ */
 public class NetworkRequestHandler extends Thread {
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(NetworkRequestHandler.class);
 	
+	/** The request queue. */
 	private Queue<Socket> requestQueue;
 
+	/**
+	 * Instantiates a new network request handler.
+	 *
+	 * @param requestQueue the request queue
+	 */
 	public NetworkRequestHandler(Queue<Socket> requestQueue) {
 		this.requestQueue = requestQueue;
 		this.start();
 		System.out.println("NetworkRequestHandler Started! " + System.currentTimeMillis());
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		while (true) {

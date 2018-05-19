@@ -3,20 +3,36 @@ package io.zino.mystore.networkEngine;
 import org.apache.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
-import io.zino.mystore.storageEngine.StorageEngine;
 
+/**
+ * The Class NetworkRequestHandlerEngine.
+ */
 public class NetworkRequestHandlerEngine{
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(NetworkRequestHandlerEngine.class);
 	
+	/** The instance. */
 	private static NetworkRequestHandlerEngine instance = new NetworkRequestHandlerEngine();
+	
+	/** The network engine. */
 	private NetworkEngine networkEngine;
-	private StorageEngine stringMapEngine;
+	
+	/** The handlers. */
 	private NetworkRequestHandler[] handlers;
 
+	/**
+	 * Gets the single instance of NetworkRequestHandlerEngine.
+	 *
+	 * @return single instance of NetworkRequestHandlerEngine
+	 */
 	public static NetworkRequestHandlerEngine getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Instantiates a new network request handler engine.
+	 */
 	private NetworkRequestHandlerEngine() {
 		this.networkEngine = NetworkEngine.getInstance();
 		int size = Integer.parseInt(ConfigMgr.getInstance().get("NetworkRequestHandlerEngine.size"));

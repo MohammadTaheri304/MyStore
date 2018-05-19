@@ -15,19 +15,37 @@ import io.zino.mystore.clusterEngine.ClusterRequest.RequestType;
 import io.zino.mystore.storageEngine.StorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 
+/**
+ * The Class ClusterEngine.
+ */
 public class ClusterEngine extends Thread {
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(ClusterEngine.class);
 
+	/** The Constant NODE_ID. */
 	public static final String NODE_ID = ConfigMgr.getInstance().get("ClusterEngine.node.id");
+	
+	/** The instance. */
 	private static ClusterEngine instance = new ClusterEngine();
+	
+	/** The node map. */
 	private Map<String, ClusterNode> nodeMap;
 
+	/**
+	 * Gets the single instance of ClusterEngine.
+	 *
+	 * @return single instance of ClusterEngine
+	 */
 	public static ClusterEngine getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Instantiates a new cluster engine.
+	 */
 	private ClusterEngine() {
-		this.nodeMap = new ConcurrentHashMap();
+		this.nodeMap = new ConcurrentHashMap<String, ClusterNode>();
 		long nodeCount = Long.parseLong(ConfigMgr.getInstance().get("ClusterEngine.adjNodeCount"));
 		for (int i = 1; i <= nodeCount; i++) {
 			String nodeid = ConfigMgr.getInstance().get("ClusterEngine.node." + i + ".nodeUid");
@@ -40,30 +58,58 @@ public class ClusterEngine extends Thread {
 		System.out.println("ClusterEngine Started! " + System.currentTimeMillis());
 	}
 
+	/**
+	 * Gets the request.
+	 *
+	 * @param storageEntry the storage entry
+	 * @return the request
+	 */
 	public StorageEntry getRequest(StorageEntry storageEntry) {
 		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.GET, storageEntry));
 	}
 
+	/**
+	 * Adds the request.
+	 *
+	 * @param storageEntry the storage entry
+	 * @return the storage entry
+	 */
 	public StorageEntry addRequest(StorageEntry storageEntry) {
 		nodeMap.keySet().forEach(nodeId -> this.sendRequest(nodeId, new ClusterRequest(RequestType.ADD, storageEntry)));
 		return storageEntry;
 	}
 
+	/**
+	 * Update request.
+	 *
+	 * @param storageEntry the storage entry
+	 * @return the storage entry
+	 */
 	public StorageEntry updateRequest(StorageEntry storageEntry) {
 		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.UPDATE, storageEntry));
 	}
 
+	/**
+	 * Delete request.
+	 *
+	 * @param storageEntry the storage entry
+	 * @return the storage entry
+	 */
 	public StorageEntry deleteRequest(StorageEntry storageEntry) {
 		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.DELETE, storageEntry));
 	}
 
+	/**
+	 * Send request.
+	 *
+	 * @param destId the dest id
+	 * @param request the request
+	 * @return the storage entry
+	 */
 	private StorageEntry sendRequest(String destId, ClusterRequest request) {
 		ClusterNode dest = nodeMap.get(destId);
 		try {
 			Socket clientSocket = new Socket(dest.getAddress(), dest.getPort());
-			if (clientSocket == null)
-				return null;
-
 			ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 			ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -79,6 +125,9 @@ public class ClusterEngine extends Thread {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		try {

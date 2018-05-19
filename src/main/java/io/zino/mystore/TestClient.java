@@ -11,13 +11,27 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+/**
+ * The Class TestClient.
+ */
 public class TestClient {
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(TestClient.class);
+	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		runCliClient();
 		//test();
 	}
 
+	/**
+	 * Run cli client.
+	 */
 	private static void runCliClient() {
 		Map<String, String> map = new HashMap<>();
 		TestClient client = new TestClient();
@@ -122,14 +136,14 @@ public class TestClient {
 					map.remove(key);
 				}
 				
-//				if(count%10000==0){
-//					try {
-//						Thread.sleep(1000L);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
+				if(count%100000==0){
+					try {
+						Thread.sleep(1000L);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			// client.stopConnection();
 		} catch (UnknownHostException e) {
@@ -139,26 +153,56 @@ public class TestClient {
 		}
 	}
 
+	/**
+	 * Random.
+	 *
+	 * @return the int
+	 */
 	private static int Random() {
 		return (int) (Math.random() * 10000000) % 1000000;
 	}
 
+	/** The client socket. */
 	private Socket clientSocket;
+	
+	/** The out. */
 	private PrintWriter out;
+	
+	/** The in. */
 	private BufferedReader in;
 
+	/**
+	 * Start connection.
+	 *
+	 * @param ip the ip
+	 * @param port the port
+	 * @throws UnknownHostException the unknown host exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void startConnection(String ip, int port) throws UnknownHostException, IOException {
 		clientSocket = new Socket(ip, port);
 		out = new PrintWriter(clientSocket.getOutputStream(), true);
 		in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 	}
 
+	/**
+	 * Send message.
+	 *
+	 * @param msg the msg
+	 * @return the string
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public String sendMessage(String msg) throws IOException {
 		out.println(msg);
 		String resp = in.readLine();
 		return resp;
 	}
 
+	/**
+	 * Stop connection.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void stopConnection() throws IOException {
 		in.close();
 		out.close();

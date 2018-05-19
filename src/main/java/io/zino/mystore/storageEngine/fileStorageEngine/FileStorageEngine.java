@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package io.zino.mystore.storageEngine.fileStorageEngine;
 
 import java.io.File;
@@ -12,13 +15,30 @@ import io.zino.mystore.storageEngine.AbstractStorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FileStorageEngine.
+ */
 public class FileStorageEngine extends AbstractStorageEngine {
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(FileStorageEngine.class);
+	
+	/** The instance. */
 	private static FileStorageEngine instance = new FileStorageEngine();
 
+	/** The index file engine. */
 	private IndexFileEngine indexFileEngine;
+	
+	/** The db file engine. */
 	private DBFileEngine dbFileEngine;
 
+	/**
+	 * Gets the file access.
+	 *
+	 * @param fileadrs the fileadrs
+	 * @return the file access
+	 */
 	private RandomAccessFile getFileAccess(String fileadrs) {
 		File file = new File(fileadrs);
 		if (!file.exists()) {
@@ -38,10 +58,18 @@ public class FileStorageEngine extends AbstractStorageEngine {
 		return raf;
 	}
 
+	/**
+	 * Gets the single instance of FileStorageEngine.
+	 *
+	 * @return single instance of FileStorageEngine
+	 */
 	public static FileStorageEngine getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Instantiates a new file storage engine.
+	 */
 	private FileStorageEngine() {
 		this.dbFileEngine = new DBFileEngine(
 				this.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbFile")));
@@ -58,6 +86,9 @@ public class FileStorageEngine extends AbstractStorageEngine {
 		System.out.println("FileStorageEngine Started! " + System.currentTimeMillis());
 	}
 
+	/**
+	 * Eval for upgrade.
+	 */
 	private void evalForUpgrade() {
 		long sleepDuration = 10000;
 		double agingThreshold = Double
@@ -91,15 +122,26 @@ public class FileStorageEngine extends AbstractStorageEngine {
 		}
 	}
 
+	/**
+	 * Upgrade.
+	 *
+	 * @param storageEntry the storage entry
+	 */
 	private void upgrade(StorageEntry storageEntry) {
 		MemoryStorageEngine.getInstance().insert(storageEntry);
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#containsKey(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public boolean containsKey(StorageEntry key) {
 		return (this.get(key) == null) ? false : true;
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#get(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry get(StorageEntry storageEntry) {
 		Long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());
@@ -112,6 +154,9 @@ public class FileStorageEngine extends AbstractStorageEngine {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#insert(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry insert(StorageEntry storageEntry) {
 		if (this.containsKey(storageEntry))
@@ -124,6 +169,9 @@ public class FileStorageEngine extends AbstractStorageEngine {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#update(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry update(StorageEntry storageEntry) {
 		StorageEntry loadEntry = this.get(storageEntry);
@@ -138,6 +186,9 @@ public class FileStorageEngine extends AbstractStorageEngine {
 		return loadEntry;
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#delete(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry delete(StorageEntry storageEntry) {
 		long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());

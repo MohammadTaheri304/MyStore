@@ -11,17 +11,32 @@ import io.zino.mystore.storageEngine.AbstractStorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 
+/**
+ * The Class MemoryStorageEngine.
+ */
 public class MemoryStorageEngine extends AbstractStorageEngine {
 
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(MemoryStorageEngine.class);
 	
+	/** The instance. */
 	private static MemoryStorageEngine instance = new MemoryStorageEngine();
+	
+	/** The data. */
 	private Map<String, StorageEntry> data;
 
+	/**
+	 * Gets the single instance of MemoryStorageEngine.
+	 *
+	 * @return single instance of MemoryStorageEngine
+	 */
 	public static MemoryStorageEngine getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Instantiates a new memory storage engine.
+	 */
 	private MemoryStorageEngine() {
 		data = new ConcurrentHashMap<String, StorageEntry>();
 		new Thread(new Runnable() {
@@ -34,6 +49,9 @@ public class MemoryStorageEngine extends AbstractStorageEngine {
 		System.out.println("MemoryStorageEngine Started! " + System.currentTimeMillis());
 	}
 
+	/**
+	 * Eval fordowngarde.
+	 */
 	private void evalFordowngarde() {
 		int configSize = Integer.parseInt(ConfigMgr.getInstance().get("MemoryStorageEngine.size"));
 		long sleepDuration = 2500;
@@ -68,12 +86,23 @@ public class MemoryStorageEngine extends AbstractStorageEngine {
 		}
 	}
 
+	/**
+	 * Eval aging.
+	 *
+	 * @param entry the entry
+	 * @return the double
+	 */
 	private double evalAging(Entry<String, StorageEntry> entry) {
 		long idealTime = System.currentTimeMillis() - entry.getValue().getLastAccess();
 		double aging = entry.getValue().getTouchCount()/(idealTime+1);
 		return aging;
 	}
 
+	/**
+	 * Downgarde.
+	 *
+	 * @param storageEntry the storage entry
+	 */
 	private void downgarde(StorageEntry storageEntry){
 		StorageEntry insert = FileStorageEngine.getInstance().insert(storageEntry);
 		if(insert==null){
@@ -81,11 +110,17 @@ public class MemoryStorageEngine extends AbstractStorageEngine {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#containsKey(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public boolean containsKey(StorageEntry key) {
 		return this.data.containsKey(key.getKey());
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#get(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry get(StorageEntry storageEntry) {
 		if (this.data.containsKey(storageEntry.getKey())) {
@@ -94,6 +129,9 @@ public class MemoryStorageEngine extends AbstractStorageEngine {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#insert(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry insert(StorageEntry storageEntry) {
 		if (!this.data.containsKey(storageEntry.getKey())) {
@@ -103,6 +141,9 @@ public class MemoryStorageEngine extends AbstractStorageEngine {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#update(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry update(StorageEntry storageEntry) {
 		if (this.data.containsKey(storageEntry.getKey())) {
@@ -111,6 +152,9 @@ public class MemoryStorageEngine extends AbstractStorageEngine {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#delete(io.zino.mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry delete(StorageEntry storageEntry) {
 		if (this.data.containsKey(storageEntry.getKey())) {

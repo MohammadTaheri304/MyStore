@@ -1,27 +1,49 @@
+/*
+ * 
+ */
 package io.zino.mystore.storageEngine.fileStorageEngine;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.instrument.Instrumentation;
 
 import org.apache.log4j.Logger;
 
 import io.zino.mystore.storageEngine.StorageEntry;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DBFileEngine.
+ */
 public class DBFileEngine {
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(DBFileEngine.class);
 
+	/**
+	 * Instantiates a new DB file engine.
+	 *
+	 * @param dbFile the db file
+	 */
 	public DBFileEngine(RandomAccessFile dbFile) {
 		super();
 		this.dbFile = dbFile;
 	}
 
-	private static Instrumentation instrumentation;
+	/** The write head. */
 	private long writeHead = 1L;
+	
+	/** The dirty entry. */
 	public static int dirtyEntry = 0;
 
+	/** The db file. */
 	RandomAccessFile dbFile;
 
+	/**
+	 * Load entry.
+	 *
+	 * @param head the head
+	 * @return the storage entry
+	 */
 	synchronized StorageEntry loadEntry(long head) {
 		try {
 			this.dbFile.seek(head);
@@ -40,6 +62,12 @@ public class DBFileEngine {
 		return null;
 	}
 
+	/**
+	 * Load string.
+	 *
+	 * @return the string
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private String loadString() throws IOException {
 		StringBuilder sb = new StringBuilder();
 		int size = this.dbFile.readInt();
@@ -49,6 +77,12 @@ public class DBFileEngine {
 		return sb.toString();
 	}
 
+	/**
+	 * Save entry.
+	 *
+	 * @param entry the entry
+	 * @return the long
+	 */
 	synchronized long saveEntry(StorageEntry entry) {
 		final long wh = this.writeHead;
 		final long size = this.saveEntry(wh, entry);
@@ -61,6 +95,13 @@ public class DBFileEngine {
 		return wh;
 	}
 
+	/**
+	 * Save entry.
+	 *
+	 * @param head the head
+	 * @param entry the entry
+	 * @return the long
+	 */
 	private long saveEntry(long head, StorageEntry entry) {
 		try {
 			this.dbFile.seek(head);
@@ -81,6 +122,12 @@ public class DBFileEngine {
 		}
 	}
 
+	/**
+	 * Save string.
+	 *
+	 * @param string the string
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void saveString(String string) throws IOException {
 		this.dbFile.writeInt(string.length());
 		for (int c : string.toCharArray())

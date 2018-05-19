@@ -5,18 +5,28 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
-import io.zino.mystore.clusterEngine.ClusterEngine;
 import io.zino.mystore.storageEngine.QueryResult;
 import io.zino.mystore.storageEngine.StorageEngine;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CommandEngine.
+ */
 public class CommandEngine {
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(CommandEngine.class);
 	
+	/**
+	 * Query.
+	 *
+	 * @param query the query
+	 * @return the string
+	 */
 	public static String query(String query) {
 		StorageEngine stringMapEngine = StorageEngine.getInstance();
 
-		try {
-			Scanner in = new Scanner(query);
+		try(Scanner in = new Scanner(query)) {
 			String call = in.next().toUpperCase();
 			switch (call) {
 			case "ADD": {
@@ -44,7 +54,7 @@ public class CommandEngine {
 			}
 		} catch (NoSuchElementException e) {
 			logger.error("Error on processing the request", e);
-		}
+		} 
 
 		return new QueryResult(null, null, "QUERY_FAILED").toString();
 	}

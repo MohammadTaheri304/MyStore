@@ -6,25 +6,49 @@ import io.zino.mystore.clusterEngine.ClusterEngine;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 
-public class StorageEngine extends AbstractStorageEngine{
+/**
+ * The Class StorageEngine.
+ */
+public class StorageEngine extends AbstractStorageEngine {
 
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(StorageEngine.class);
-	
+
+	/** The instance. */
 	private static StorageEngine instance = new StorageEngine();
+
+	/** The memory storage engine. */
 	private MemoryStorageEngine memoryStorageEngine;
+
+	/** The file storage engine. */
 	private FileStorageEngine fileStorageEngine;
 
+	/**
+	 * Gets the single instance of StorageEngine.
+	 *
+	 * @return single instance of StorageEngine
+	 */
 	public static StorageEngine getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Instantiates a new storage engine.
+	 */
 	private StorageEngine() {
 		this.memoryStorageEngine = MemoryStorageEngine.getInstance();
 		this.fileStorageEngine = FileStorageEngine.getInstance();
 
-		System.out.println("StringMapEngine Started! " + System.currentTimeMillis());
+		System.out.println("StorageEngine Started! " + System.currentTimeMillis());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.zino.mystore.storageEngine.AbstractStorageEngine#get(io.zino.mystore.
+	 * storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry get(StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.get(storageEntry);
@@ -33,13 +57,26 @@ public class StorageEngine extends AbstractStorageEngine{
 		return fileStorageEngine.get(storageEntry);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#insert(io.zino.
+	 * mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry insert(StorageEntry storageEntry) {
 		boolean containsKey = this.containsKey(storageEntry);
-		if(containsKey) return null;
+		if (containsKey)
+			return null;
 		return memoryStorageEngine.insert(storageEntry);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#update(io.zino.
+	 * mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry update(StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.update(storageEntry);
@@ -48,6 +85,12 @@ public class StorageEngine extends AbstractStorageEngine{
 		return fileStorageEngine.update(storageEntry);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#delete(io.zino.
+	 * mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public StorageEntry delete(StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.delete(storageEntry);
@@ -55,7 +98,14 @@ public class StorageEngine extends AbstractStorageEngine{
 			return se;
 		return fileStorageEngine.delete(storageEntry);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.zino.mystore.storageEngine.AbstractStorageEngine#containsKey(io.zino.
+	 * mystore.storageEngine.StorageEntry)
+	 */
 	@Override
 	public boolean containsKey(StorageEntry key) {
 		boolean se = memoryStorageEngine.containsKey(key);
@@ -64,6 +114,15 @@ public class StorageEngine extends AbstractStorageEngine{
 		return fileStorageEngine.containsKey(key);
 	}
 
+	/**
+	 * Insert.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 * @return the query result
+	 */
 	public QueryResult insert(String key, String value) {
 		StorageEntry storageEntry = new StorageEntry(key, value);
 		StorageEntry se = this.insert(storageEntry);
@@ -74,6 +133,15 @@ public class StorageEngine extends AbstractStorageEngine{
 		return new QueryResult(null, null, "INSERT_FALSE");
 	}
 
+	/**
+	 * Update.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 * @return the query result
+	 */
 	public QueryResult update(String key, String value) {
 		StorageEntry storageEntry = new StorageEntry(key, value);
 		StorageEntry se = this.get(storageEntry);
@@ -100,6 +168,13 @@ public class StorageEngine extends AbstractStorageEngine{
 			return new QueryResult(null, null, "UPDATE_FALSE");
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param key
+	 *            the key
+	 * @return the query result
+	 */
 	public QueryResult get(String key) {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
@@ -120,6 +195,13 @@ public class StorageEngine extends AbstractStorageEngine{
 		}
 	}
 
+	/**
+	 * Exist.
+	 *
+	 * @param key
+	 *            the key
+	 * @return the query result
+	 */
 	public QueryResult exist(String key) {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
@@ -140,6 +222,13 @@ public class StorageEngine extends AbstractStorageEngine{
 		}
 	}
 
+	/**
+	 * Delete.
+	 *
+	 * @param key
+	 *            the key
+	 * @return the query result
+	 */
 	public QueryResult delete(String key) {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);

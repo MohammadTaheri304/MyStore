@@ -10,23 +10,42 @@ import org.apache.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
 
+/**
+ * The Class NetworkEngine.
+ */
 public class NetworkEngine extends Thread{
+	
+	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(NetworkEngine.class);
 
+	/** The instance. */
 	private static NetworkEngine instance = new NetworkEngine();
+	
+	/** The sockets. */
 	private Queue<Socket> sockets;
 	
+	/**
+	 * Gets the single instance of NetworkEngine.
+	 *
+	 * @return single instance of NetworkEngine
+	 */
 	public static NetworkEngine getInstance() {
 		return instance;
 	}
 	
+	/**
+	 * Instantiates a new network engine.
+	 */
 	private NetworkEngine() {
 		this.sockets = new ConcurrentLinkedQueue<Socket>();
 		this.start();
 		
-		System.out.println("SimpleNetworkEngine Started! "+System.currentTimeMillis());
+		System.out.println("NetworkEngine Started! "+System.currentTimeMillis());
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	@Override
 	public void run() {
 		try {
@@ -50,10 +69,20 @@ public class NetworkEngine extends Thread{
 	}
 
 	
+	/**
+	 * Gets the sokects.
+	 *
+	 * @return the sokects
+	 */
 	public Queue<Socket> getSokects() {
 		return sockets;
 	}
 
+	/**
+	 * Sets the sokects.
+	 *
+	 * @param sokects the new sokects
+	 */
 	public void setSokects(Queue<Socket> sokects) {
 		this.sockets = sokects;
 	}	
