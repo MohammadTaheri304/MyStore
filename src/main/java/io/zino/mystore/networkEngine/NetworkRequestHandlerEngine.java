@@ -7,7 +7,7 @@ import io.zino.mystore.ConfigMgr;
 /**
  * The Class NetworkRequestHandlerEngine.
  */
-public class NetworkRequestHandlerEngine{
+final public class NetworkRequestHandlerEngine{
 	
 	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(NetworkRequestHandlerEngine.class);

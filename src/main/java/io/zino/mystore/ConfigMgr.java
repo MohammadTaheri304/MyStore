@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 /**
  * The Class ConfigMgr.
  */
-public class ConfigMgr {
+final public class ConfigMgr {
 	
 	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(ConfigMgr.class);

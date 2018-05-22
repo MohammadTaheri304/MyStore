@@ -14,7 +14,7 @@ import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 /**
  * The Class MemoryStorageEngine.
  */
-public class MemoryStorageEngine extends AbstractStorageEngine {
+final public class MemoryStorageEngine extends AbstractStorageEngine {
 
 	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(MemoryStorageEngine.class);

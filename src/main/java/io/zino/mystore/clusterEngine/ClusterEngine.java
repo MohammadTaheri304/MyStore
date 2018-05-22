@@ -18,7 +18,7 @@ import io.zino.mystore.storageEngine.StorageEntry;
 /**
  * The Class ClusterEngine.
  */
-public class ClusterEngine extends Thread {
+final public class ClusterEngine extends Thread {
 	
 	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(ClusterEngine.class);

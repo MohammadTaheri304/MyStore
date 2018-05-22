@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 /**
  * The Class IndexFileEngine.
  */
-public class IndexFileEngine {
+final public class IndexFileEngine {
 	
 	/** The counter. */
 	public static int counter = 0;

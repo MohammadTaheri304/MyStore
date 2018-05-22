@@ -14,7 +14,7 @@ import io.zino.mystore.storageEngine.StorageEntry;
 /**
  * The Class DBFileEngine.
  */
-public class DBFileEngine {
+final public class DBFileEngine {
 	
 	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(DBFileEngine.class);

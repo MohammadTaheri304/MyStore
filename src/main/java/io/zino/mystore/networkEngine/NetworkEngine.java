@@ -13,7 +13,7 @@ import io.zino.mystore.ConfigMgr;
 /**
  * The Class NetworkEngine.
  */
-public class NetworkEngine extends Thread{
+final public class NetworkEngine extends Thread{
 	
 	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(NetworkEngine.class);

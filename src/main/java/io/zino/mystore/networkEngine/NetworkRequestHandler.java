@@ -15,7 +15,7 @@ import io.zino.mystore.commandEngine.CommandEngine;
 /**
  * The Class NetworkRequestHandler.
  */
-public class NetworkRequestHandler extends Thread {
+final public class NetworkRequestHandler extends Thread {
 	
 	/** The Constant logger. */
 	final static Logger logger = Logger.getLogger(NetworkRequestHandler.class);
