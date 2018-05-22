@@ -91,6 +91,7 @@ public class FileStorageEngine extends AbstractStorageEngine {
 	 */
 	private void evalForUpgrade() {
 		long sleepDuration = 10000;
+		long MAX_SLEEP_DURATION = 15 * 60 * 1000;
 		double agingThreshold = Double
 				.parseDouble(ConfigMgr.getInstance().get("FileStorageEngine.upgradeAgingThreshold"));
 		while (true) {
@@ -119,6 +120,7 @@ public class FileStorageEngine extends AbstractStorageEngine {
 				indexEntry = this.indexFileEngine.getIndexEntry(item);
 			}
 			sleepDuration = (long) (decSleppDuration ? sleepDuration * (0.8) : sleepDuration * (1.2));
+			sleepDuration = (MAX_SLEEP_DURATION < sleepDuration) ? MAX_SLEEP_DURATION : sleepDuration;
 		}
 	}
 
