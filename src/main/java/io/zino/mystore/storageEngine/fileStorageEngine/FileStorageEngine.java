@@ -41,12 +41,13 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	 */
 	private RandomAccessFile getFileAccess(String fileadrs) {
 		File file = new File(fileadrs);
-		if (!file.exists()) {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (file.exists()) {
+			file.delete();
+		}
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		RandomAccessFile raf = null;
 		try {

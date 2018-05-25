@@ -110,7 +110,9 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 	private void downgarde(StorageEntry storageEntry) {
 		StorageEntry insert = FileStorageEngine.getInstance().insert(storageEntry);
 		if (insert == null) {
-			logger.error("Insert faild in donwgrading " + storageEntry.toString());
+			logger.error("Insert faild in donwgrading: " + storageEntry.toString());
+		}else{
+			logger.debug("Entry downgraded from Memory: "+storageEntry.toString());
 		}
 	}
 

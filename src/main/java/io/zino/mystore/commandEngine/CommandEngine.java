@@ -53,7 +53,7 @@ public class CommandEngine {
 			}
 			}
 		} catch (NoSuchElementException e) {
-			logger.error("Error on processing the request", e);
+			logger.error("Error on processing the request. query: "+query);
 		} 
 
 		return new QueryResult(null, null, "QUERY_FAILED").toString();

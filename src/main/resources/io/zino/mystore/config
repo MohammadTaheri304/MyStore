@@ -1,4 +1,4 @@
-MemoryStorageEngine.size=100
+MemoryStorageEngine.size=10
 
 FileStorageEngine.upgradeAgingThreshold=0.001
 FileStorageEngine.dbFile=db.mysdb

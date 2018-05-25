@@ -53,7 +53,7 @@ final public class NetworkRequestHandler extends Thread {
 					}
 					this.requestQueue.add(socket);
 				} catch (IOException e) {
-					logger.error("error on sockets", e);
+					logger.error("error on sockets");
 				}
 			} else {
 				synchronized (this.requestQueue) {
