@@ -4,7 +4,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Class IndexFileEngine.
@@ -12,7 +13,7 @@ import org.apache.log4j.Logger;
 final public class IndexFileEngine {
 
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(IndexFileEngine.class);
+	final static Logger logger = LogManager.getLogger(IndexFileEngine.class);
 
 	/** The write head. */
 	private static long writeHead = 0;
@@ -114,7 +115,7 @@ final public class IndexFileEngine {
 	 *            the head
 	 * @return the index file entry
 	 */
-	private IndexFileEntry loadIndexFileEntry(long head) {
+	synchronized private IndexFileEntry loadIndexFileEntry(long head) {
 		if (IndexFileEngine.writeHead <= head || head < 0) {
 			logger.debug("OutOfBound head error on loadIndexFileEntry head=" + head + " and writeHead="
 					+ IndexFileEngine.writeHead);

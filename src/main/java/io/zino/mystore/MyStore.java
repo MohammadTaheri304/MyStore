@@ -1,6 +1,7 @@
 package io.zino.mystore;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.clusterEngine.ClusterEngine;
 import io.zino.mystore.networkEngine.NetworkEngine;
@@ -14,7 +15,7 @@ import io.zino.mystore.storageEngine.StorageEngine;
 public class MyStore {
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(MyStore.class);
+	final static Logger logger = LogManager.getLogger(MyStore.class);
 
 	/**
 	 * The main method.

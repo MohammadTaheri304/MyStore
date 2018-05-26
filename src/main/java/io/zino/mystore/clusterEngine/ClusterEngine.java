@@ -8,7 +8,8 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.clusterEngine.ClusterRequest.RequestType;
@@ -21,7 +22,7 @@ import io.zino.mystore.storageEngine.StorageEntry;
 final public class ClusterEngine extends Thread {
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(ClusterEngine.class);
+	final static Logger logger = LogManager.getLogger(ClusterEngine.class);
 
 	/** The Constant NODE_ID. */
 	public static final String NODE_ID = ConfigMgr.getInstance().get("ClusterEngine.node.id");

@@ -7,7 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.commandEngine.CommandEngine;
 
@@ -18,7 +19,7 @@ import io.zino.mystore.commandEngine.CommandEngine;
 final public class NetworkRequestHandler extends Thread {
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(NetworkRequestHandler.class);
+	final static Logger logger = LogManager.getLogger(NetworkRequestHandler.class);
 	
 	/** The request queue. */
 	private Queue<Socket> requestQueue;

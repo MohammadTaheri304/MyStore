@@ -1,6 +1,7 @@
 package io.zino.mystore.networkEngine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
 
@@ -10,7 +11,7 @@ import io.zino.mystore.ConfigMgr;
 final public class NetworkRequestHandlerEngine{
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(NetworkRequestHandlerEngine.class);
+	final static Logger logger = LogManager.getLogger(NetworkRequestHandlerEngine.class);
 	
 	/** The instance. */
 	private static NetworkRequestHandlerEngine instance = new NetworkRequestHandlerEngine();
