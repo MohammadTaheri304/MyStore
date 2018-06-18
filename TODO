@@ -1,3 +1,8 @@
 MGET
 implement FileIndexEngine
 optimize clusterEngine communication
+
+
+
+///
+mvn -DmemoryInMB=2000 -Dcores=2 evosuite:generate evosuite:export  test
