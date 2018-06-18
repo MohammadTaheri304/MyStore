@@ -3,7 +3,8 @@ package io.zino.mystore.commandEngine;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.storageEngine.QueryResult;
 import io.zino.mystore.storageEngine.StorageEngine;
@@ -15,7 +16,7 @@ import io.zino.mystore.storageEngine.StorageEngine;
 public class CommandEngine {
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(CommandEngine.class);
+	final static Logger logger = LogManager.getLogger(CommandEngine.class);
 	
 	/**
 	 * Query.
@@ -53,7 +54,7 @@ public class CommandEngine {
 			}
 			}
 		} catch (NoSuchElementException e) {
-			logger.error("Error on processing the request", e);
+			logger.error("Error on processing the request. query: "+query);
 		} 
 
 		return new QueryResult(null, null, "QUERY_FAILED").toString();

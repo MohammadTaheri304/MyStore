@@ -5,7 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Class ConfigMgr.
@@ -13,7 +14,7 @@ import org.apache.log4j.Logger;
 final public class ConfigMgr {
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(ConfigMgr.class);
+	final static Logger logger = LogManager.getLogger(ConfigMgr.class);
 	
 	/** The instance. */
 	private static ConfigMgr instance = new ConfigMgr();

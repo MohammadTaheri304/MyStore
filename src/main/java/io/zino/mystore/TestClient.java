@@ -9,15 +9,15 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  * The Class TestClient.
  */
 public class TestClient {
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(TestClient.class);
+	final static Logger logger = LogManager.getLogger(TestClient.class);
 	
 	/**
 	 * The main method.
@@ -136,11 +136,10 @@ public class TestClient {
 					map.remove(key);
 				}
 				
-				if(count%100000==0){
+				if(count%10000==0){
 					try {
 						Thread.sleep(1000L);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

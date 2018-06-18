@@ -6,18 +6,18 @@ package io.zino.mystore.storageEngine.fileStorageEngine;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.storageEngine.StorageEntry;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DBFileEngine.
  */
 final public class DBFileEngine {
 	
 	/** The Constant logger. */
-	final static Logger logger = Logger.getLogger(DBFileEngine.class);
+	final static Logger logger = LogManager.getLogger(DBFileEngine.class);
 
 	/**
 	 * Instantiates a new DB file engine.
