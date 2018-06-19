@@ -20,16 +20,16 @@ import io.zino.mystore.storageEngine.StorageEntry;
  * The Class ClusterEngine.
  */
 final public class ClusterEngine extends Thread {
-	
+
 	/** The Constant logger. */
 	final static Logger logger = LogManager.getLogger(ClusterEngine.class);
 
 	/** The Constant NODE_ID. */
 	public static final String NODE_ID = ConfigMgr.getInstance().get("ClusterEngine.node.id");
-	
+
 	/** The instance. */
 	private static ClusterEngine instance = new ClusterEngine();
-	
+
 	/** The node map. */
 	private Map<String, ClusterNode> nodeMap;
 
@@ -62,7 +62,8 @@ final public class ClusterEngine extends Thread {
 	/**
 	 * Gets the request.
 	 *
-	 * @param storageEntry the storage entry
+	 * @param storageEntry
+	 *            the storage entry
 	 * @return the request
 	 */
 	public StorageEntry getRequest(StorageEntry storageEntry) {
@@ -72,7 +73,8 @@ final public class ClusterEngine extends Thread {
 	/**
 	 * Adds the request.
 	 *
-	 * @param storageEntry the storage entry
+	 * @param storageEntry
+	 *            the storage entry
 	 * @return the storage entry
 	 */
 	public StorageEntry addRequest(StorageEntry storageEntry) {
@@ -83,7 +85,8 @@ final public class ClusterEngine extends Thread {
 	/**
 	 * Update request.
 	 *
-	 * @param storageEntry the storage entry
+	 * @param storageEntry
+	 *            the storage entry
 	 * @return the storage entry
 	 */
 	public StorageEntry updateRequest(StorageEntry storageEntry) {
@@ -93,7 +96,8 @@ final public class ClusterEngine extends Thread {
 	/**
 	 * Delete request.
 	 *
-	 * @param storageEntry the storage entry
+	 * @param storageEntry
+	 *            the storage entry
 	 * @return the storage entry
 	 */
 	public StorageEntry deleteRequest(StorageEntry storageEntry) {
@@ -103,8 +107,10 @@ final public class ClusterEngine extends Thread {
 	/**
 	 * Send request.
 	 *
-	 * @param destId the dest id
-	 * @param request the request
+	 * @param destId
+	 *            the dest id
+	 * @param request
+	 *            the request
 	 * @return the storage entry
 	 */
 	private StorageEntry sendRequest(String destId, ClusterRequest request) {
@@ -126,22 +132,48 @@ final public class ClusterEngine extends Thread {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
 	public void run() {
+		int port = Integer.parseInt(ConfigMgr.getInstance().get("ClusterEngine.node.port"));
+
+		ServerSocket serverSocket = null;
 		try {
-			int port = Integer.parseInt(ConfigMgr.getInstance().get("ClusterEngine.node.port"));
+			serverSocket = new ServerSocket(port);
+		} catch (IOException e) {
+			logger.error("Error on Cluster listener -cannot start ServerSocket", e);
+			return;
+		}
+		while (true) {
+			Socket clientSocket;
+			try {
+				clientSocket = serverSocket.accept();
+			} catch (IOException e) {
+				logger.error("Error on Cluster listener", e);
+				continue;
+			}
+			new Thread(() -> {
+				ObjectOutputStream out = null;
+				ObjectInputStream input = null;
+				try {
+					out = new ObjectOutputStream(clientSocket.getOutputStream());
+					input = new ObjectInputStream(clientSocket.getInputStream());
+				} catch (IOException e) {
+					logger.error("Error on Cluster listener", e);
+					return;
+				}
 
-			@SuppressWarnings("resource")
-			ServerSocket serverSocket = new ServerSocket(port);
-			while (true) {
-				Socket clientSocket = serverSocket.accept();
-				ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-				ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
-
-				ClusterRequest request = ((ClusterRequest) input.readObject());
+				ClusterRequest request = null;
+				try {
+					request = ((ClusterRequest) input.readObject());
+				} catch (ClassNotFoundException | IOException e) {
+					logger.error("Error on Cluster listener", e);
+					return;
+				}
 				StorageEntry rse = request.getStorageEntry();
 				StorageEntry result = null;
 				switch (request.getRequestType()) {
@@ -163,12 +195,15 @@ final public class ClusterEngine extends Thread {
 				}
 				}
 
-				out.writeObject(result);
-				out.close();
-				clientSocket.close();
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			logger.error("Error on Cluster listener", e);
+				try {
+					out.writeObject(result);
+					out.close();
+					clientSocket.close();
+				} catch (IOException e) {
+					logger.error("Error on Cluster listener", e);
+				}
+
+			}).start();
 		}
 	}
 }
