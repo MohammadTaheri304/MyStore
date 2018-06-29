@@ -54,6 +54,7 @@ final public class NetworkEngine extends Thread{
 			
 			@SuppressWarnings("resource")
 			ServerSocket serverSocket = new ServerSocket(port);
+			logger.info("NetworkEngine start on port "+port);
 			while (true) {
 				Socket socket = serverSocket.accept();
 				sockets.add(socket);

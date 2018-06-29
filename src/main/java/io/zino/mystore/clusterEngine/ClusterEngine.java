@@ -144,6 +144,7 @@ final public class ClusterEngine extends Thread {
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(port);
+			logger.info("ClusterEngine start on port "+port);
 		} catch (IOException e) {
 			logger.error("Error on Cluster listener -cannot start ServerSocket", e);
 			return;
