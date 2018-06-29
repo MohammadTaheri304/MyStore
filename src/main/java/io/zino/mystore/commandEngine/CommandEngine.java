@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.Gson;
 
 import io.zino.mystore.storageEngine.QueryResult;
 import io.zino.mystore.storageEngine.StorageEngine;
@@ -20,6 +21,8 @@ public class CommandEngine {
 	
 	/** The Constant logger. */
 	final static Logger logger = LogManager.getLogger(CommandEngine.class);
+	
+	final static private Gson gson = new Gson();
 	
 	/**
 	 * Query.
@@ -36,24 +39,24 @@ public class CommandEngine {
 			case "ADD": {
 				String key = in.next();
 				String value = in.next();
-				return stringMapEngine.insert(key, value).toString();
+				return gson.toJson(stringMapEngine.insert(key, value));
 			}
 			case "UPDATE": {
 				String key = in.next();
 				String value = in.next();
-				return stringMapEngine.update(key, value).toString();
+				return gson.toJson(stringMapEngine.update(key, value));
 			}
 			case "DELETE": {
 				String key = in.next();
-				return stringMapEngine.delete(key).toString();
+				return gson.toJson(stringMapEngine.delete(key));
 			}
 			case "GET": {
 				String key = in.next();
-				return stringMapEngine.get(key).toString();
+				return gson.toJson(stringMapEngine.get(key));
 			}
 			case "EXIST": {
 				String key = in.next();
-				return stringMapEngine.exist(key).toString();
+				return gson.toJson(stringMapEngine.exist(key));
 			}
 			case "MGET": {
 				List<QueryResult> ress = new ArrayList<>();
@@ -61,15 +64,13 @@ public class CommandEngine {
 					String key = in.next();
 					ress.add(stringMapEngine.get(key));
 				}
-				return  ress.stream()
-					      .map(res -> res.toString())
-					      .collect(Collectors.joining(",", "[", "]"));
+				return  gson.toJson(ress);
 			}
 			}
 		} catch (NoSuchElementException e) {
 			logger.error("Error on processing the request. query: "+query);
 		} 
 
-		return new QueryResult(null, null, "QUERY_FAILED").toString();
+		return gson.toJson(new QueryResult(null, null, "QUERY_FAILED"));
 	}
 }
