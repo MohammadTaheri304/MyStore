@@ -1,7 +1,10 @@
 package io.zino.mystore.commandEngine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +54,16 @@ public class CommandEngine {
 			case "EXIST": {
 				String key = in.next();
 				return stringMapEngine.exist(key).toString();
+			}
+			case "MGET": {
+				List<QueryResult> ress = new ArrayList<>();
+				while(in.hasNext()){
+					String key = in.next();
+					ress.add(stringMapEngine.get(key));
+				}
+				return  ress.stream()
+					      .map(res -> res.toString())
+					      .collect(Collectors.joining(",", "[", "]"));
 			}
 			}
 		} catch (NoSuchElementException e) {
