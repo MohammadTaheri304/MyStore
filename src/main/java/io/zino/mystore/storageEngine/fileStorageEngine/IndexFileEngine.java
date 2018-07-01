@@ -3,6 +3,7 @@ package io.zino.mystore.storageEngine.fileStorageEngine;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +56,7 @@ final public class IndexFileEngine {
 			hash += (c * 133 + c * c * depth) + (-1 * depth);
 		}
 
-		return (hash % 5) + 1;
+		return Math.abs(hash % 5) + 1;
 	}
 	
 	private int hashDepth1(String key, int depth){
@@ -65,7 +66,7 @@ final public class IndexFileEngine {
 		}
 		hash =+ (-1 * depth);
 
-		return (hash % 5) + 1;
+		return Math.abs(hash % 5) + 1;
 	}
 	
 	private int hashDepth2(String key, int depth){
@@ -75,7 +76,7 @@ final public class IndexFileEngine {
 		}
 		hash *=3;
 
-		return (hash % 5) + 1;
+		return Math.abs(hash % 5) + 1;
 	}
 
 	/**
@@ -343,9 +344,8 @@ final public class IndexFileEngine {
 	 * @return the index entry
 	 */
 	public Long getIndexEntry(long item) {
-		this.currentItem = 0;
 		try {
-			IndexFileEntry entry = this.getIndexEntry(item, 0);
+			IndexFileEntry entry = this.getIndexEntry(item, 0, 0);
 			if (entry != null)
 				return entry.getValue();
 		} catch (EOFException e) {
@@ -355,9 +355,41 @@ final public class IndexFileEngine {
 		return -1L;
 	}
 
-	/** The current item. */
-	private long currentItem;
+	
+	public Iterable<Long> getIndexEntries(){
+		return new Iterable<Long>() {
+			
+			@Override
+			public Iterator<Long> iterator() {
+				return new Iterator<Long>() {
 
+					long current = 0;
+					long head = 0;
+					
+					@Override
+					public boolean hasNext() {
+						try {
+							return getIndexEntry(current+1, current, head)!=null ? true : false;
+						} catch (EOFException e) {
+							logger.error("EOF Error on getIndexEntries::next", e);
+						}
+						return false;
+					}
+
+					@Override
+					public Long next() {
+						try {
+							return getIndexEntry(++current, current-1, head).getValue();
+						} catch (EOFException e) {
+							logger.error("EOF Error on getIndexEntries::next", e);
+						}
+						return -1l;
+					}
+				};
+			}
+		};
+	}
+	
 	/**
 	 * Gets the index entry.
 	 *
@@ -367,45 +399,40 @@ final public class IndexFileEngine {
 	 *            the head
 	 * @return the index entry
 	 */
-	public IndexFileEntry getIndexEntry(long destItem, long head) throws EOFException {
+	public IndexFileEntry getIndexEntry(long destItem, long currentItem, long head) throws EOFException {
 		IndexFileEntry entry = this.loadIndexFileEntry(head);
 		if (entry == null) {
 			return null;
-		} else if (this.currentItem == destItem) {
+		} else if (currentItem == destItem) {
 			return entry;
 		} else {
 			long childAt1 = entry.getChildAt(1);
 			if (childAt1 != -1 || childAt1 != 0) {
-				this.currentItem++;
-				IndexFileEntry ch1 = getIndexEntry(destItem, childAt1);
+				IndexFileEntry ch1 = getIndexEntry(destItem, ++currentItem, childAt1);
 				if (ch1 != null)
 					return ch1;
 			}
 			long childAt2 = entry.getChildAt(2);
 			if (childAt2 != -1 || childAt2 != 0) {
-				this.currentItem++;
-				IndexFileEntry ch2 = getIndexEntry(destItem, childAt2);
+				IndexFileEntry ch2 = getIndexEntry(destItem, ++currentItem, childAt2);
 				if (ch2 != null)
 					return ch2;
 			}
 			long childAt3 = entry.getChildAt(3);
 			if (childAt3 != -1 || childAt3 != 0) {
-				this.currentItem++;
-				IndexFileEntry ch3 = getIndexEntry(destItem, childAt3);
+				IndexFileEntry ch3 = getIndexEntry(destItem, ++currentItem, childAt3);
 				if (ch3 != null)
 					return ch3;
 			}
 			long childAt4 = entry.getChildAt(4);
 			if (childAt4 != -1 || childAt4 != 0) {
-				this.currentItem++;
-				IndexFileEntry ch4 = getIndexEntry(destItem, childAt4);
+				IndexFileEntry ch4 = getIndexEntry(destItem, ++currentItem, childAt4);
 				if (ch4 != null)
 					return ch4;
 			}
 			long childAt5 = entry.getChildAt(5);
 			if (childAt5 != -1 || childAt5 != 0) {
-				this.currentItem++;
-				IndexFileEntry ch5 = getIndexEntry(destItem, childAt5);
+				IndexFileEntry ch5 = getIndexEntry(destItem, ++currentItem, childAt5);
 				if (ch5 != null)
 					return ch5;
 			}
