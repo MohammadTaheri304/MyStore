@@ -39,23 +39,28 @@ public class CommandEngine {
 			case "ADD": {
 				String key = in.next();
 				String value = in.next();
+				logger.debug("ADD request recived ("+key+" , "+value+")");
 				return gson.toJson(stringMapEngine.insert(key, value));
 			}
 			case "UPDATE": {
 				String key = in.next();
 				String value = in.next();
+				logger.debug("UPDATE request recived ("+key+" , "+value+")");
 				return gson.toJson(stringMapEngine.update(key, value));
 			}
 			case "DELETE": {
 				String key = in.next();
+				logger.debug("DELETE request recived ("+key+")");
 				return gson.toJson(stringMapEngine.delete(key));
 			}
 			case "GET": {
 				String key = in.next();
+				logger.debug("GET request recived ("+key+")");
 				return gson.toJson(stringMapEngine.get(key));
 			}
 			case "EXIST": {
 				String key = in.next();
+				logger.debug("EXIST request recived ("+key+")");
 				return gson.toJson(stringMapEngine.exist(key));
 			}
 			case "MGET": {
@@ -64,6 +69,7 @@ public class CommandEngine {
 					String key = in.next();
 					ress.add(stringMapEngine.get(key));
 				}
+				logger.debug("MGET request recived "+gson.toJson(ress));
 				return  gson.toJson(ress);
 			}
 			}
