@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.storageEngine.AbstractStorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
-import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 
 /**
  * The Class FileStorageEngine.
@@ -28,10 +27,10 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	private static FileStorageEngine instance = new FileStorageEngine();
 
 	/** The index file engine. */
-	private IndexFileEngine indexFileEngine;
+	IndexFileEngine indexFileEngine;
 	
 	/** The db file engine. */
-	private DBFileEngine dbFileEngine;
+	DBFileEngine dbFileEngine;
 
 	/**
 	 * Gets the file access.
@@ -77,61 +76,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 		this.indexFileEngine = new IndexFileEngine(
 				this.getFileAccess(ConfigMgr.getInstance().get("FileStorageEngine.dbIndexFile")));
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				evalForUpgrade();
-			}
-		}).start();
-
 		System.out.println("FileStorageEngine Started! " + System.currentTimeMillis());
-	}
-
-	/**
-	 * Eval for upgrade.
-	 */
-	private void evalForUpgrade() {
-		long sleepDuration = 10000;
-		long MAX_SLEEP_DURATION = 15 * 60 * 1000;
-		double agingThreshold = Double
-				.parseDouble(ConfigMgr.getInstance().get("FileStorageEngine.upgradeAgingThreshold"));
-		while (true) {
-			try {
-				Thread.sleep(sleepDuration);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			boolean decSleppDuration = false;
-
-			long item = 0L;
-			Long indexEntry = this.indexFileEngine.getIndexEntry(item);
-			while (indexEntry != null) {
-				item++;
-				if (indexEntry==-1) {
-					continue;
-				}
-				StorageEntry entry = this.dbFileEngine.loadEntry(indexEntry);
-				long idealTime = System.currentTimeMillis() - entry.getLastAccess();
-				double aging = entry.getTouchCount() / (idealTime + 1);
-				if (aging >= agingThreshold) {
-					StorageEntry upgradeEntry = this.delete(entry);
-					this.upgrade(upgradeEntry);
-					decSleppDuration = true;
-				}
-				indexEntry = this.indexFileEngine.getIndexEntry(item);
-			}
-			sleepDuration = (long) (decSleppDuration ? sleepDuration * (0.8) : sleepDuration * (1.2));
-			sleepDuration = (MAX_SLEEP_DURATION < sleepDuration) ? MAX_SLEEP_DURATION : sleepDuration;
-		}
-	}
-
-	/**
-	 * Upgrade.
-	 *
-	 * @param storageEntry the storage entry
-	 */
-	private void upgrade(StorageEntry storageEntry) {
-		MemoryStorageEngine.getInstance().insert(storageEntry);
 	}
 
 	/* (non-Javadoc)
