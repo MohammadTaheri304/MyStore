@@ -63,7 +63,7 @@ final public class NetworkEngine extends Thread{
 						this.sockets.notify();
 					}
 				}
-				System.out.println("new socket added to socket queue");
+				logger.debug("new socket added to socket queue");
 			}	
 		} catch (IOException e) {
 			logger.error("Error on accept new socket!", e);

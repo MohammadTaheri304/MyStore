@@ -77,8 +77,8 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 				for (Entry<String, StorageEntry> entry : this.data.entrySet()) {
 					double aging = evalAging(entry);
 					if (aging <= agingThresh) {
-						this.data.remove(entry.getKey());
 						this.downgarde(entry.getValue());
+						this.data.remove(entry.getKey());
 					}
 				}
 
