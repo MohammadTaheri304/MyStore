@@ -112,6 +112,15 @@ public class StorageEntry implements Serializable {
 		this.touch();
 		return data;
 	}
+	
+	/**
+	 * Sets the data.
+	 *
+	 * @param data the new data
+	 */
+	public void setData(String data) {
+		this.data = data;
+	}
 
 	/**
 	 * Update data.

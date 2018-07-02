@@ -10,8 +10,8 @@ NetworkRequestHandlerEngine.size=2
 ClusterEngine.node.id=nodeX1
 ClusterEngine.node.port=12351
 
-ClusterEngine.adjNodeCount=0
+ClusterEngine.adjNodeCount=1
 
-# ClusterEngine.node.1.nodeUid=nodeX2
-# ClusterEngine.node.1.address=localhost
-# ClusterEngine.node.1.port=12352
+ClusterEngine.node.1.nodeUid=nodeX2
+ClusterEngine.node.1.address=localhost
+ClusterEngine.node.1.port=12352
