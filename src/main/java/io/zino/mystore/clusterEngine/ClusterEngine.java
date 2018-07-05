@@ -52,7 +52,17 @@ final public class ClusterEngine extends Thread {
 			String nodeid = ConfigMgr.getInstance().get("ClusterEngine.node." + i + ".nodeUid");
 			String address = ConfigMgr.getInstance().get("ClusterEngine.node." + i + ".address");
 			int port = Integer.parseInt(ConfigMgr.getInstance().get("ClusterEngine.node." + i + ".port"));
-			this.nodeMap.put(nodeid, new ClusterNode(nodeid, address, port));
+			ClusterNode clusterNode = new ClusterNode(nodeid, address, port);
+			try {
+				Socket clientSocket = new Socket(address, port);
+				clusterNode.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+				clusterNode.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+			} catch (IOException e) {
+				logger.error("Error on setting I/O Streams for cluster node", e);
+			}
+			this.nodeMap.put(nodeid, clusterNode);
+			
+			
 		}
 		this.start();
 
@@ -116,14 +126,19 @@ final public class ClusterEngine extends Thread {
 	private StorageEntry sendRequest(String destId, ClusterRequest request) {
 		ClusterNode dest = nodeMap.get(destId);
 		try {
-			Socket clientSocket = new Socket(dest.getAddress(), dest.getPort());
-			ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-			ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
-
-			out.writeObject(request);
-			StorageEntry response = ((StorageEntry) input.readObject());
-			out.close();
-			clientSocket.close();
+			if(dest.objectOutputStream==null || dest.objectInputStream==null){
+				try {
+					Socket clientSocket = new Socket(dest.getAddress(), dest.getPort());
+					dest.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+					dest.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
+				} catch (IOException e) {
+					logger.error("Error on resetting I/O Streams for cluster node", e);
+				}
+			}
+			
+			dest.objectOutputStream .writeObject(request);
+			StorageEntry response = ((StorageEntry) dest.objectInputStream.readObject());
+			
 			return response;
 		} catch (ClassNotFoundException | IOException e) {
 			logger.error("Error on sending request", e);
@@ -168,42 +183,47 @@ final public class ClusterEngine extends Thread {
 					return;
 				}
 
-				ClusterRequest request = null;
-				try {
-					request = ((ClusterRequest) input.readObject());
-				} catch (ClassNotFoundException | IOException e) {
-					logger.error("Error on Cluster listener", e);
-					return;
-				}
-				StorageEntry rse = request.getStorageEntry();
-				StorageEntry result = null;
-				switch (request.getRequestType()) {
-				case GET: {
-					result = StorageEngine.getInstance().get(rse);
-					break;
-				}
-				case ADD: {
-					result = StorageEngine.getInstance().insert(rse);
-					break;
-				}
-				case UPDATE: {
-					result = StorageEngine.getInstance().update(rse);
-					break;
-				}
-				case DELETE: {
-					result = StorageEngine.getInstance().delete(rse);
-					break;
-				}
-				}
+				while(true){
+					ClusterRequest request = null;
+					try {
+						request = ((ClusterRequest) input.readObject());
+					} catch (ClassNotFoundException | IOException e) {
+						logger.error("Error on Cluster listener", e);
+						break;
+					}
+					StorageEntry rse = request.getStorageEntry();
+					StorageEntry result = null;
+					switch (request.getRequestType()) {
+					case GET: {
+						result = StorageEngine.getInstance().get(rse);
+						break;
+					}
+					case ADD: {
+						result = StorageEngine.getInstance().insert(rse);
+						break;
+					}
+					case UPDATE: {
+						result = StorageEngine.getInstance().update(rse);
+						break;
+					}
+					case DELETE: {
+						result = StorageEngine.getInstance().delete(rse);
+						break;
+					}
+					}
 
+					try {
+						out.writeObject(result);
+					} catch (IOException e) {
+						logger.error("Error on Cluster listener", e);
+					}
+
+				}
 				try {
-					out.writeObject(result);
 					out.close();
-					clientSocket.close();
 				} catch (IOException e) {
-					logger.error("Error on Cluster listener", e);
+					logger.error("Error on closing connection", e);
 				}
-
 			}).start();
 		}
 	}

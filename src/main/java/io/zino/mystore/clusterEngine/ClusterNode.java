@@ -1,5 +1,8 @@
 package io.zino.mystore.clusterEngine;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class ClusterNode.
@@ -14,6 +17,10 @@ public class ClusterNode {
 	
 	/** The port. */
 	private int port;
+	
+	ObjectOutputStream objectOutputStream;
+	ObjectInputStream objectInputStream;
+
 	
 	/**
 	 * Instantiates a new cluster node.
