@@ -1,10 +1,14 @@
-add refragmentation for dbFileEngine and indexFileEngine
-optimize clusterEngine communication
-use cryptoghraphy for cluster engine and network engine
+add refragmentation for dbFileEngine and indexFileEngine.
+optimize clusterEngine communication.
+use cryptoghraphy for cluster engine and network engine.
+add data load balancer. distribute data among nodes.
+dynamic config!
+add admin panel.
+add node monitor.
+Currently the cluster should be a complete graph. make it work with not complete graph schema.
 
-
-///
+/// for compilling a fat jar
 mvn clean compile assembly:single
 
-///
+/// for automatic test generation
 mvn -DmemoryInMB=2000 -Dcores=2 evosuite:generate evosuite:export  test
