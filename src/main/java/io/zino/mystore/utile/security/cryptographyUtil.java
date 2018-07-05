@@ -7,12 +7,13 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,9 +46,9 @@ public class cryptographyUtil {
 		return cryptographyUtil.keyPair.getPublic();
 	}
 
-	public static String Encrypt(String data, Key key) {
+	private static String EncryptRSA(String data, Key key) {
 		try {
-			Cipher cipher = Cipher.getInstance("RSA");
+			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return new String(cipher.doFinal(data.getBytes("UTF-8")));
 		} catch (NoSuchAlgorithmException e) {
@@ -72,23 +73,19 @@ public class cryptographyUtil {
 		return null;
 	}
 
-	public static String Encrypt(String data) {
-		return cryptographyUtil.Encrypt(data, cryptographyUtil.keyPair.getPrivate());
-	}
-
 	public static String SignByOwnedKeyAndEncryptWithGivenKey(String data, Key key) {
-		data = cryptographyUtil.Encrypt(data, key);
-		return cryptographyUtil.Encrypt(data, cryptographyUtil.keyPair.getPrivate());
+		data = cryptographyUtil.EncryptRSA(data, key);
+		return cryptographyUtil.EncryptRSA(data, cryptographyUtil.keyPair.getPrivate());
 	}
 
 	public static String DecryptByGivenKeyANDDecryptByOwnedKey(String data, Key key) {
-		data = cryptographyUtil.Decrypt(data, key);
-		return cryptographyUtil.Decrypt(data, cryptographyUtil.keyPair.getPrivate());
+		data = cryptographyUtil.DecryptRSA(data, key);
+		return cryptographyUtil.DecryptRSA(data, cryptographyUtil.keyPair.getPrivate());
 	}
 
-	public static String Decrypt(String encryptedData, Key key) {
+	private static String DecryptRSA(String encryptedData, Key key) {
 		try {
-			Cipher decrypt = Cipher.getInstance("RSA");
+			Cipher decrypt = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			decrypt.init(Cipher.DECRYPT_MODE, key);
 			return new String(decrypt.doFinal(encryptedData.getBytes("UTF-8")));
 		} catch (NoSuchAlgorithmException e) {
@@ -107,21 +104,88 @@ public class cryptographyUtil {
 			logger.error(e);
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static String Decrypt(String encryptedData) {
-		return cryptographyUtil.Decrypt(encryptedData, cryptographyUtil.keyPair.getPrivate());
+	public static SecretKey generateAESKey(){
+		try {
+			KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+			keyGen.init(256); 
+			return keyGen.generateKey();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
+	} 
+	
+	private static String EncryptAES(String data, Key key) {
+		try {
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+			return new String(cipher.doFinal(data.getBytes("UTF-8")));
+		} catch (NoSuchAlgorithmException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		return null;
 	}
 
+	
+	private static String DecryptAES(String encryptedData, Key key) {
+		try {
+			Cipher decrypt = Cipher.getInstance("AES");
+			decrypt.init(Cipher.DECRYPT_MODE, key);
+			return new String(decrypt.doFinal(encryptedData.getBytes("UTF-8")));
+		} catch (NoSuchAlgorithmException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
 	public static void main(String[] args) {
 		String data = "Hello there";
-		System.out.println(data);
-		String encrypData = new String(SignByOwnedKeyAndEncryptWithGivenKey(data, getPublicKey()));
-		System.out.println(encrypData);
-		String decrypData = new String(DecryptByGivenKeyANDDecryptByOwnedKey(encrypData, getPublicKey()));
+		System.out.println(data.length()+":: "+data);
+		
+		SecretKey aeskey = generateAESKey();
+		
+		String encrypData = new String(EncryptAES(data, aeskey));
+		System.out.println(encrypData.length()+":: "+encrypData);
+		String decrypData = new String(DecryptAES(encrypData, aeskey));
 		System.out.println(decrypData);
 	}
 
