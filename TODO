@@ -7,9 +7,3 @@ add node monitor.
 donnot save other nodes data. just remmeber which node is the owner of a key.
 Currently the cluster should be a complete graph. make it work with not complete graph schema.
 add data load balancer. distribute data among nodes.
-
-/// for compilling a fat jar
-mvn clean compile assembly:single
-
-/// for automatic test generation
-mvn -DmemoryInMB=2000 -Dcores=2 evosuite:generate evosuite:export  test
