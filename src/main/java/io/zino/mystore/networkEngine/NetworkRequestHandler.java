@@ -17,17 +17,18 @@ import io.zino.mystore.commandEngine.CommandEngine;
  * The Class NetworkRequestHandler.
  */
 final public class NetworkRequestHandler extends Thread {
-	
+
 	/** The Constant logger. */
 	final static Logger logger = LogManager.getLogger(NetworkRequestHandler.class);
-	
+
 	/** The request queue. */
 	private Queue<Socket> requestQueue;
 
 	/**
 	 * Instantiates a new network request handler.
 	 *
-	 * @param requestQueue the request queue
+	 * @param requestQueue
+	 *            the request queue
 	 */
 	public NetworkRequestHandler(Queue<Socket> requestQueue) {
 		this.requestQueue = requestQueue;
@@ -35,7 +36,9 @@ final public class NetworkRequestHandler extends Thread {
 		System.out.println("NetworkRequestHandler Started! " + System.currentTimeMillis());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
@@ -46,13 +49,15 @@ final public class NetworkRequestHandler extends Thread {
 				try {
 					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-					String inputLine;
-					if ((inputLine = in.readLine()) != null) {
-						String result = CommandEngine.query(inputLine);
-						out.println(result);
+					if (in.ready()) {
+						String inputLine = null;
+						if ((inputLine = in.readLine()) != null) {
+							String result = CommandEngine.query(inputLine);
+							out.println(result);
+						}
 					}
 					this.requestQueue.add(socket);
+
 				} catch (IOException e) {
 					logger.error("error on sockets");
 				}
@@ -64,7 +69,7 @@ final public class NetworkRequestHandler extends Thread {
 						logger.error("error on wait!", e);
 					}
 				}
-				
+
 			}
 		}
 	}
