@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +18,7 @@ final public class IndexFileEngine {
 	final static Logger logger = LogManager.getLogger(IndexFileEngine.class);
 
 	/** The write head. */
-	private static long writeHead = 0;
+	private static AtomicLong writeHead = new AtomicLong(0l);
 
 	private RandomAccessFile indexFile;
 
@@ -117,7 +118,7 @@ final public class IndexFileEngine {
 	 * @return the index file entry
 	 */
 	synchronized private IndexFileEntry loadIndexFileEntry(long head) {
-		if (IndexFileEngine.writeHead <= head || head < 0) {
+		if (IndexFileEngine.writeHead.longValue() <= head || head < 0) {
 			logger.debug("OutOfBound head error on loadIndexFileEntry head=" + head + " and writeHead="
 					+ IndexFileEngine.writeHead);
 			return null;
@@ -244,7 +245,7 @@ final public class IndexFileEngine {
 			IndexFileEntry savedEntry = new IndexFileEntry(-1l, -1l, -1l, -1l, -1l, value, key);
 			try {
 				this.saveIndexFileEntry(head, savedEntry);
-				IndexFileEngine.writeHead = this.indexFile.getFilePointer();
+				IndexFileEngine.writeHead.set(this.indexFile.getFilePointer());	
 				return savedEntry;
 			} catch (IOException e) {
 				logger.error("IO Error on saveAddressKey", e);
@@ -253,9 +254,9 @@ final public class IndexFileEngine {
 			int computeHash = this.computeHash(key, depth + 1);
 			long childAt = entry.getChildAt(computeHash);
 			if (childAt == -1 || childAt == 0) {
-				entry.setChildAt(computeHash, writeHead);
+				entry.setChildAt(computeHash, IndexFileEngine.writeHead.longValue());
 				this.saveIndexFileEntry(head, entry);
-				return this.saveAddressKey(key, value, writeHead, depth + 1);
+				return this.saveAddressKey(key, value, IndexFileEngine.writeHead.longValue(), depth + 1);
 			} else {
 				if (childAt < 0) {
 					System.out.println("@@@");
