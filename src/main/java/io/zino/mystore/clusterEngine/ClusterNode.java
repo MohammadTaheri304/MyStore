@@ -2,8 +2,8 @@ package io.zino.mystore.clusterEngine;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.Key;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ClusterNode.
  */
@@ -18,9 +18,10 @@ public class ClusterNode {
 	/** The port. */
 	private int port;
 	
-	ObjectOutputStream objectOutputStream;
-	ObjectInputStream objectInputStream;
-
+	ObjectOutputStream objectOutputStream = null;
+	ObjectInputStream objectInputStream = null;
+	Key publickey = null;
+	Key connectionDesKey = null;
 	
 	/**
 	 * Instantiates a new cluster node.
