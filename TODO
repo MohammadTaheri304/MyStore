@@ -1,10 +1,9 @@
-add refragmentation for dbFileEngine and indexFileEngine
-optimize clusterEngine communication
-use cryptoghraphy for cluster engine and network engine
-
-
-///
-mvn clean compile assembly:single
-
-///
-mvn -DmemoryInMB=2000 -Dcores=2 evosuite:generate evosuite:export  test
+add refragmentation for dbFileEngine and indexFileEngine.
+optimize clusterEngine communication.
+use cryptoghraphy for cluster engine and network engine.
+dynamic config!
+add admin panel.
+add node monitor.
+donnot save other nodes data. just remmeber which node is the owner of a key.
+Currently the cluster should be a complete graph. make it work with not complete graph schema.
+add data load balancer. distribute data among nodes.

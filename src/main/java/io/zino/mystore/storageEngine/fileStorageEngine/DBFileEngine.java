@@ -5,6 +5,7 @@ package io.zino.mystore.storageEngine.fileStorageEngine;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +31,7 @@ final public class DBFileEngine {
 	}
 
 	/** The write head. */
-	private long writeHead = 1L;
+	private AtomicLong writeHead = new AtomicLong(1L);
 	
 	/** The dirty entry. */
 	public static int dirtyEntry = 0;
@@ -84,14 +85,14 @@ final public class DBFileEngine {
 	 * @return the long
 	 */
 	synchronized long saveEntry(StorageEntry entry) {
-		final long wh = this.writeHead;
+		final long wh = this.writeHead.longValue();
 		final long size = this.saveEntry(wh, entry);
 		if(size==-1){
 			logger.debug("saveEntry Failed! "+entry.toString());
 			return -1l;
 		}
-		this.writeHead += size;
-		logger.debug("save Entry with key " + entry.getKey() + " with Head " + wh + " end is " + this.writeHead);
+		long newWH = this.writeHead.addAndGet(size);
+		logger.debug("save Entry with key " + entry.getKey() + " with Head " + wh + " end is " + newWH);
 		return wh;
 	}
 
