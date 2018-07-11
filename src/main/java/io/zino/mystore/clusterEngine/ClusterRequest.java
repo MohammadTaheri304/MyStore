@@ -5,7 +5,6 @@ import java.security.Key;
 
 import io.zino.mystore.storageEngine.StorageEntry;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ClusterRequest.
  */
@@ -19,6 +18,8 @@ public class ClusterRequest implements Serializable {
 	 */
 	public enum RequestType {
 		
+		/** The node des register. */
+		NODE_DES_REGISTER,
 		/** The node register. */
 		NODE_REGISTER,
 		/** The update. */
@@ -33,6 +34,9 @@ public class ClusterRequest implements Serializable {
 
 	/** The public key. */
 	private Key publicKey;
+	
+	/** The des key. */
+	private byte[] desKey;
 	
 	/** The request type. */
 	private RequestType requestType;
@@ -90,34 +94,34 @@ public class ClusterRequest implements Serializable {
 		this.nodeId = storageEntry.getNodeId();
 	}
 
-	/**
-	 * Gets the public key.
-	 *
-	 * @return the public key
-	 */
 	public Key getPublicKey() {
 		return publicKey;
 	}
 
-	/**
-	 * Sets the public key.
-	 *
-	 * @param publicKey the new public key
-	 */
 	public void setPublicKey(Key publicKey) {
 		this.publicKey = publicKey;
 	}
-	
+
+	public byte[] getDesKey() {
+		return desKey;
+	}
+
+	public void setDesKey(byte[] desKey) {
+		this.desKey = desKey;
+	}
+
 	/**
 	 * Instantiates a new cluster request.
 	 *
 	 * @param publicKey the public key
+	 * @param requestType the request type
 	 */
-	public ClusterRequest(Key publicKey) {
+	public ClusterRequest(Key publicKey, RequestType requestType) {
 		super();
-		this.requestType = RequestType.NODE_REGISTER;
+		this.requestType = requestType;
 		this.publicKey = publicKey;
 	}
+	
 
 	/**
 	 * Instantiates a new cluster request.
