@@ -8,6 +8,7 @@ import io.zino.mystore.networkEngine.NetworkEngine;
 import io.zino.mystore.networkEngine.NetworkRequestHandlerEngine;
 import io.zino.mystore.storageEngine.StorageEngine;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngineOptimizer;
+import io.zino.mystore.util.security.CryptographyUtil;
 
 /**
  * The Class MyStore.
@@ -27,6 +28,7 @@ public class MyStore {
 	public static void main(String[] args) {
 		System.out.println("Hello there!!!");
 		
+		CryptographyUtil.getPublicKey();
 		ConfigMgr.getInstance();
 		StorageEngine.getInstance();
 		FileStorageEngineOptimizer.getInstance();
