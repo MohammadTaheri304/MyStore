@@ -3,6 +3,8 @@ package io.zino.mystore.clusterEngine;
 import java.io.Serializable;
 import java.security.Key;
 
+import com.google.gson.Gson;
+
 import io.zino.mystore.storageEngine.StorageEntry;
 
 /**
@@ -146,5 +148,11 @@ public class ClusterRequest implements Serializable {
 		super();
 		this.requestType = requestType;
 		this.setStorageEntry(storageEntry);
+	}
+	
+	@Override
+	public String toString() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 }

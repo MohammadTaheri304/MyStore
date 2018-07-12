@@ -15,6 +15,8 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.Gson;
+
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.clusterEngine.ClusterRequest.RequestType;
 import io.zino.mystore.storageEngine.StorageEngine;
@@ -39,6 +41,8 @@ final public class ClusterEngine extends Thread {
 	/** The node map. */
 	private Map<String, ClusterNode> nodeMap;
 
+	private final Gson gson = new Gson();
+	
 	/**
 	 * Gets the single instance of ClusterEngine.
 	 *
@@ -79,7 +83,7 @@ final public class ClusterEngine extends Thread {
 	 *            the storage entry
 	 * @return the request
 	 */
-	public StorageEntry getRequest(StorageEntry storageEntry) {
+	public StorageEntry getRequest(final StorageEntry storageEntry) {
 		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.GET, storageEntry));
 	}
 
@@ -90,7 +94,7 @@ final public class ClusterEngine extends Thread {
 	 *            the storage entry
 	 * @return the storage entry
 	 */
-	public StorageEntry addRequest(StorageEntry storageEntry) {
+	public StorageEntry addRequest(final StorageEntry storageEntry) {
 		nodeMap.keySet().forEach(nodeId -> this.sendRequest(nodeId, new ClusterRequest(RequestType.ADD, storageEntry)));
 		return storageEntry;
 	}
@@ -102,7 +106,7 @@ final public class ClusterEngine extends Thread {
 	 *            the storage entry
 	 * @return the storage entry
 	 */
-	public StorageEntry updateRequest(StorageEntry storageEntry) {
+	public StorageEntry updateRequest(final StorageEntry storageEntry) {
 		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.UPDATE, storageEntry));
 	}
 
@@ -113,7 +117,7 @@ final public class ClusterEngine extends Thread {
 	 *            the storage entry
 	 * @return the storage entry
 	 */
-	public StorageEntry deleteRequest(StorageEntry storageEntry) {
+	public StorageEntry deleteRequest(final StorageEntry storageEntry) {
 		return this.sendRequest(storageEntry.getNodeId(), new ClusterRequest(RequestType.DELETE, storageEntry));
 	}
 
@@ -126,7 +130,7 @@ final public class ClusterEngine extends Thread {
 	 *            the request
 	 * @return the storage entry
 	 */
-	private StorageEntry sendRequest(String destId, ClusterRequest request) {
+	private StorageEntry sendRequest(final String destId, final ClusterRequest request) {
 		ClusterNode dest = nodeMap.get(destId);
 		try {
 			if (dest==null || dest.objectOutputStream == null 
@@ -141,11 +145,12 @@ final public class ClusterEngine extends Thread {
 				}
 			}
 			
+			logger.debug("Sending request "+gson.toJson(request));
 			request.setStorageEntry(encryptStorageEntry(request.getStorageEntry(), dest.connectionDesKey));
 			dest.objectOutputStream.writeObject(request);
 			StorageEntry response = ((StorageEntry) dest.objectInputStream.readObject());
 			response = decryptStorageEntry(response, dest.connectionDesKey);
-			
+			logger.debug("Recive request result. request="+gson.toJson(request)+" response="+gson.toJson(response));
 			return response;
 		} catch (ClassNotFoundException | IOException e) {
 			logger.error("Error on sending request", e);
@@ -194,10 +199,9 @@ final public class ClusterEngine extends Thread {
 	 */
 	private StorageEntry encryptStorageEntry(final StorageEntry storageEntry, final Key key){
 		if(storageEntry==null) return null;
-		StorageEntry clone = storageEntry.clone();
-		clone.setKey(CryptographyUtil.EncryptDES(clone.getKey(), key));
-		clone.setData(CryptographyUtil.EncryptDES(clone.getData(), key));
-		return clone;
+		return storageEntry.cloneWithNewKeyAndNewData(
+				CryptographyUtil.EncryptDES(storageEntry.getKey(), key), 
+				CryptographyUtil.EncryptDES(storageEntry.getData(), key));	 
 	}
 	
 	/**
@@ -209,10 +213,9 @@ final public class ClusterEngine extends Thread {
 	 */
 	private StorageEntry decryptStorageEntry(final StorageEntry storageEntry, final Key key){
 		if(storageEntry==null) return null;
-		StorageEntry clone = storageEntry.clone();
-		clone.setKey(CryptographyUtil.DecryptDES(clone.getKey(), key));
-		clone.setData(CryptographyUtil.DecryptDES(clone.getData(), key));
-		return clone;
+		return storageEntry.cloneWithNewKeyAndNewData(
+				CryptographyUtil.DecryptDES(storageEntry.getKey(), key),
+				CryptographyUtil.DecryptDES(storageEntry.getData(), key));
 	}
 
 
@@ -271,7 +274,7 @@ final public class ClusterEngine extends Thread {
 		 *
 		 * @param clientSocket the client socket
 		 */
-		public IncommingClusterRequestHandler(Socket clientSocket) {
+		public IncommingClusterRequestHandler(final Socket clientSocket) {
 			this.clientSocket = clientSocket;
 		}
 		
@@ -407,24 +410,28 @@ final public class ClusterEngine extends Thread {
 		 * @param request the request
 		 * @return the storage entry
 		 */
-		private StorageEntry handleRequest(ClusterRequest request){
+		private StorageEntry handleRequest(final ClusterRequest request){
 			StorageEntry rse = request.getStorageEntry();
 			StorageEntry result = null;
 			switch (request.getRequestType()) {
 			case GET: {
 				result = StorageEngine.getInstance().get(rse);
+				logger.debug("GET request recived result="+gson.toJson(result));
 				break;
 			}
 			case ADD: {
 				result = StorageEngine.getInstance().insert(rse);
+				logger.debug("ADD request recived result="+gson.toJson(result));
 				break;
 			}
 			case UPDATE: {
 				result = StorageEngine.getInstance().update(rse);
+				logger.debug("UPDATE request recived result="+gson.toJson(result));
 				break;
 			}
 			case DELETE: {
 				result = StorageEngine.getInstance().delete(rse);
+				logger.debug("DELETE request recived result="+gson.toJson(result));
 				break;
 			}
 			}
