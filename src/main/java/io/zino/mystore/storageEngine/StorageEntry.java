@@ -112,6 +112,15 @@ public class StorageEntry implements Serializable {
 		this.touch();
 		return data;
 	}
+	
+	/**
+	 * Sets the data.
+	 *
+	 * @param data the new data
+	 */
+	public void setData(String data) {
+		this.data = data;
+	}
 
 	/**
 	 * Update data.
@@ -175,7 +184,7 @@ public class StorageEntry implements Serializable {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	protected StorageEntry clone() {
+	public StorageEntry clone() {
 		 StorageEntry clone = new StorageEntry(this.version, this.getNodeId(), this.getKey(), this.getData());
 		 clone.touchCount = this.touchCount;
 		 clone.lastAccess = this.lastAccess;

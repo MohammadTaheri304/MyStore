@@ -12,6 +12,6 @@ ClusterEngine.node.port=12351
 
 ClusterEngine.adjNodeCount=0
 
-# ClusterEngine.node.1.nodeUid=nodeX2
-# ClusterEngine.node.1.address=localhost
-# ClusterEngine.node.1.port=12352
+#ClusterEngine.node.1.nodeUid=nodeX2
+#ClusterEngine.node.1.address=localhost
+#ClusterEngine.node.1.port=12352
