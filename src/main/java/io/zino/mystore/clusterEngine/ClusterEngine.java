@@ -192,11 +192,12 @@ final public class ClusterEngine extends Thread {
 	 * @param key the key
 	 * @return the storage entry
 	 */
-	private StorageEntry encryptStorageEntry(StorageEntry storageEntry, Key key){
+	private StorageEntry encryptStorageEntry(final StorageEntry storageEntry, final Key key){
 		if(storageEntry==null) return null;
-		storageEntry.setKey(CryptographyUtil.EncryptDES(storageEntry.getKey(), key));
-		storageEntry.setData(CryptographyUtil.EncryptDES(storageEntry.getData(), key));
-		return storageEntry;
+		StorageEntry clone = storageEntry.clone();
+		clone.setKey(CryptographyUtil.EncryptDES(clone.getKey(), key));
+		clone.setData(CryptographyUtil.EncryptDES(clone.getData(), key));
+		return clone;
 	}
 	
 	/**
@@ -206,11 +207,12 @@ final public class ClusterEngine extends Thread {
 	 * @param key the key
 	 * @return the storage entry
 	 */
-	private StorageEntry decryptStorageEntry(StorageEntry storageEntry, Key key){
+	private StorageEntry decryptStorageEntry(final StorageEntry storageEntry, final Key key){
 		if(storageEntry==null) return null;
-		storageEntry.setKey(CryptographyUtil.DecryptDES(storageEntry.getKey(), key));
-		storageEntry.setData(CryptographyUtil.DecryptDES(storageEntry.getData(), key));
-		return storageEntry;
+		StorageEntry clone = storageEntry.clone();
+		clone.setKey(CryptographyUtil.DecryptDES(clone.getKey(), key));
+		clone.setData(CryptographyUtil.DecryptDES(clone.getData(), key));
+		return clone;
 	}
 
 
