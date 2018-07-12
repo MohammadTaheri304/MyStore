@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+
 import io.zino.mystore.clusterEngine.ClusterEngine;
 
 // TODO: Auto-generated Javadoc
@@ -16,16 +18,16 @@ public class StorageEntry implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	/** The version. */
-	private long version;
+	private final long version;
 	
 	/** The key. */
-	private String key;
+	private final String key;
 	
 	/** The data. */
-	private String data;
+	private final String data;
 	
 	/** The node id. */
-	private String nodeId;
+	private final String nodeId;
 	
 	/** The last access. */
 	//use two below for memory hir.
@@ -112,28 +114,6 @@ public class StorageEntry implements Serializable {
 		this.touch();
 		return data;
 	}
-	
-	/**
-	 * Sets the data.
-	 *
-	 * @param data the new data
-	 */
-	public void setData(String data) {
-		this.data = data;
-	}
-
-	/**
-	 * Update data.
-	 *
-	 * @param data the data
-	 * @return the storage entry
-	 */
-	public StorageEntry updateData(String data) {
-		this.touch();
-		this.version++;
-		this.data = data;
-		return this;
-	}
 
 	/**
 	 * Gets the key.
@@ -142,15 +122,6 @@ public class StorageEntry implements Serializable {
 	 */
 	public String getKey() {
 		return key;
-	}
-
-	/**
-	 * Sets the key.
-	 *
-	 * @param key the new key
-	 */
-	public void setKey(String key) {
-		this.key = key;
 	}
 
 	/**
@@ -185,7 +156,21 @@ public class StorageEntry implements Serializable {
 	 */
 	@Override
 	public StorageEntry clone() {
-		 StorageEntry clone = new StorageEntry(this.version, this.getNodeId(), this.getKey(), this.getData());
+		 return cloneWithNewKeyAndNewData(this.getKey(), this.getData());
+	}
+	
+	/**
+	 * Clone with new data.
+	 *
+	 * @param data the data
+	 * @return the storage entry
+	 */
+	public StorageEntry cloneWithNewData(String data) {
+		 return cloneWithNewKeyAndNewData(this.getKey(), data);
+	}
+	
+	public StorageEntry cloneWithNewKeyAndNewData(String key ,String data) {
+		 StorageEntry clone = new StorageEntry(this.version, this.getNodeId(), key, data);
 		 clone.touchCount = this.touchCount;
 		 clone.lastAccess = this.lastAccess;
 		 return clone;
@@ -196,13 +181,7 @@ public class StorageEntry implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return new JSONObject()
-				.put("version", this.version)
-                .put("key", this.key)
-                .put("data", this.data)
-                .put("nodeId", this.nodeId)
-                .put("lastAccess", this.lastAccess)
-                .put("touchCount", this.touchCount)
-                .toString();
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 }

@@ -96,7 +96,7 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 	 *            the entry
 	 * @return the double
 	 */
-	private double evalAging(Entry<String, StorageEntry> entry) {
+	private double evalAging(final Entry<String, StorageEntry> entry) {
 		long idealTime = System.currentTimeMillis() - entry.getValue().getLastAccess();
 		double aging = entry.getValue().getTouchCount() / (idealTime + 1);
 		return aging;
@@ -108,7 +108,7 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 	 * @param storageEntry
 	 *            the storage entry
 	 */
-	private void downgarde(StorageEntry storageEntry) {
+	private void downgarde(final StorageEntry storageEntry) {
 		StorageEntry insert = FileStorageEngine.getInstance().insert(storageEntry);
 		if (insert == null) {
 			logger.error("Insert faild in donwgrading: " + storageEntry.toString());
@@ -125,7 +125,7 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public boolean containsKey(StorageEntry key) {
+	public boolean containsKey(final StorageEntry key) {
 		return this.data.containsKey(key.getKey());
 	}
 
@@ -151,10 +151,11 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry insert(StorageEntry storageEntry) {
+	public StorageEntry insert(final StorageEntry storageEntry) {
 		if (!this.data.containsKey(storageEntry.getKey())) {
-			this.data.put(storageEntry.getKey(), storageEntry);
-			return storageEntry;
+			StorageEntry clone = storageEntry.clone();
+			this.data.put(storageEntry.getKey(), clone);
+			return clone;
 		}
 		return null;
 	}
@@ -166,9 +167,12 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry update(StorageEntry storageEntry) {
+	public StorageEntry update(final StorageEntry storageEntry) {
 		if (this.data.containsKey(storageEntry.getKey())) {
-			return this.data.get(storageEntry.getKey()).updateData(storageEntry.getData());
+			this.data.remove(storageEntry.getKey());
+			StorageEntry clone = storageEntry.clone();
+			this.data.put(storageEntry.getKey(), clone);
+			return clone;
 		}
 		return null;
 	}
@@ -180,7 +184,7 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry delete(StorageEntry storageEntry) {
+	public StorageEntry delete(final StorageEntry storageEntry) {
 		if (this.data.containsKey(storageEntry.getKey())) {
 			return this.data.remove(storageEntry.getKey());
 		}

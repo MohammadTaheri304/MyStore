@@ -38,7 +38,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	 * @param fileadrs the fileadrs
 	 * @return the file access
 	 */
-	private RandomAccessFile getFileAccess(String fileadrs) {
+	private RandomAccessFile getFileAccess(final String fileadrs) {
 		File file = new File(fileadrs);
 		if (file.exists()) {
 			file.delete();
@@ -83,7 +83,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#containsKey(io.zino.mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public boolean containsKey(StorageEntry key) {
+	public boolean containsKey(final StorageEntry key) {
 		return (this.get(key) == null) ? false : true;
 	}
 
@@ -91,7 +91,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#get(io.zino.mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry get(StorageEntry storageEntry) {
+	public StorageEntry get(final StorageEntry storageEntry) {
 		Long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());
 		if (address==null || address == -1l || address == 0l)
 			return null;
@@ -106,7 +106,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#insert(io.zino.mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry insert(StorageEntry storageEntry) {
+	public StorageEntry insert(final StorageEntry storageEntry) {
 		if (this.containsKey(storageEntry))
 			return null;
 		long newAddress = this.dbFileEngine.saveEntry(storageEntry);
@@ -121,13 +121,12 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#update(io.zino.mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry update(StorageEntry storageEntry) {
+	public StorageEntry update(final StorageEntry storageEntry) {
 		StorageEntry loadEntry = this.get(storageEntry);
 		if (loadEntry == null)
 			return null;
-		loadEntry.updateData(storageEntry.getData());
 		DBFileEngine.dirtyEntry++;
-		long newAddress = this.dbFileEngine.saveEntry(loadEntry);
+		long newAddress = this.dbFileEngine.saveEntry(storageEntry);
 		if (newAddress == -1l)
 			return null;
 		this.indexFileEngine.updateAddressKey(loadEntry.getKey(), newAddress);
@@ -138,7 +137,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	 * @see io.zino.mystore.storageEngine.AbstractStorageEngine#delete(io.zino.mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry delete(StorageEntry storageEntry) {
+	public StorageEntry delete(final StorageEntry storageEntry) {
 		long address = this.indexFileEngine.getKeyAddress(storageEntry.getKey());
 		if (address == -1l || address == 0l)
 			return null;

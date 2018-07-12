@@ -12,7 +12,7 @@ abstract public class AbstractStorageEngine {
 	 * @param storageEntry the storage entry
 	 * @return true, if successful
 	 */
-	public abstract boolean containsKey(StorageEntry storageEntry);
+	public abstract boolean containsKey(final StorageEntry storageEntry);
 
 	/**
 	 * Gets the.
@@ -20,7 +20,7 @@ abstract public class AbstractStorageEngine {
 	 * @param storageEntry the storage entry
 	 * @return the storage entry
 	 */
-	public abstract StorageEntry get(StorageEntry storageEntry);
+	public abstract StorageEntry get(final StorageEntry storageEntry);
 
 	/**
 	 * Insert.
@@ -28,7 +28,7 @@ abstract public class AbstractStorageEngine {
 	 * @param storageEntry the storage entry
 	 * @return the storage entry
 	 */
-	public abstract StorageEntry insert(StorageEntry storageEntry);
+	public abstract StorageEntry insert(final StorageEntry storageEntry);
 
 	/**
 	 * Update.
@@ -36,7 +36,7 @@ abstract public class AbstractStorageEngine {
 	 * @param storageEntry the storage entry
 	 * @return the storage entry
 	 */
-	public abstract StorageEntry update(StorageEntry storageEntry);
+	public abstract StorageEntry update(final StorageEntry storageEntry);
 
 	/**
 	 * Delete.
@@ -44,6 +44,6 @@ abstract public class AbstractStorageEngine {
 	 * @param storageEntry the storage entry
 	 * @return the storage entry
 	 */
-	public abstract StorageEntry delete(StorageEntry storageEntry);
+	public abstract StorageEntry delete(final StorageEntry storageEntry);
 
 }

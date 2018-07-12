@@ -51,7 +51,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 * storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry get(StorageEntry storageEntry) {
+	public StorageEntry get(final StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.get(storageEntry);
 		if (se != null)
 			return se;
@@ -65,7 +65,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry insert(StorageEntry storageEntry) {
+	public StorageEntry insert(final StorageEntry storageEntry) {
 		boolean containsKey = this.containsKey(storageEntry);
 		if (containsKey)
 			return null;
@@ -79,7 +79,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry update(StorageEntry storageEntry) {
+	public StorageEntry update(final StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.update(storageEntry);
 		if (se != null)
 			return se;
@@ -93,7 +93,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public StorageEntry delete(StorageEntry storageEntry) {
+	public StorageEntry delete(final StorageEntry storageEntry) {
 		StorageEntry se = memoryStorageEngine.delete(storageEntry);
 		if (se != null)
 			return se;
@@ -108,7 +108,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 * mystore.storageEngine.StorageEntry)
 	 */
 	@Override
-	public boolean containsKey(StorageEntry key) {
+	public boolean containsKey(final StorageEntry key) {
 		boolean se = memoryStorageEngine.containsKey(key);
 		if (se)
 			return se;
@@ -124,7 +124,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 *            the value
 	 * @return the query result
 	 */
-	public QueryResult insert(String key, String value) {
+	public QueryResult insert(final String key, final String value) {
 		StorageEntry storageEntry = new StorageEntry(key, value);
 		StorageEntry se = this.insert(storageEntry);
 		if (se != null) {
@@ -143,7 +143,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 *            the value
 	 * @return the query result
 	 */
-	public QueryResult update(String key, String value) {
+	public QueryResult update(final String key, final String value) {
 		StorageEntry storageEntry = new StorageEntry(key, value);
 		StorageEntry se = this.get(storageEntry);
 		if (se != null) {
@@ -154,8 +154,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 				else
 					return new QueryResult(null, null, "UPDATE_FALSE");
 			} else {
-				StorageEntry clone = se.clone();
-				clone.updateData(value);
+				StorageEntry clone = se.cloneWithNewData(value);
 				StorageEntry updateRequest = ClusterEngine.getInstance().updateRequest(clone);
 				if (updateRequest != null) {
 					this.update(updateRequest);
@@ -176,7 +175,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 *            the key
 	 * @return the query result
 	 */
-	public QueryResult get(String key) {
+	public QueryResult get(final String key) {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
@@ -203,7 +202,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 *            the key
 	 * @return the query result
 	 */
-	public QueryResult exist(String key) {
+	public QueryResult exist(final String key) {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
@@ -230,7 +229,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 *            the key
 	 * @return the query result
 	 */
-	public QueryResult delete(String key) {
+	public QueryResult delete(final String key) {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
