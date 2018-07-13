@@ -10,6 +10,10 @@ import java.util.Queue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.Gson;
+
+import io.zino.mystore.commandEngine.CMDQueryResult;
+import io.zino.mystore.commandEngine.CMDQueryResult.CMDQueryResultStatus;
 import io.zino.mystore.commandEngine.CommandEngine;
 
 // TODO: Auto-generated Javadoc
@@ -43,21 +47,31 @@ final public class NetworkRequestHandler extends Thread {
 	 */
 	@Override
 	public void run() {
+		final Gson gson = new Gson();
 		while (true) {
 			Socket socket = this.requestQueue.poll();
 			if (socket != null) {
 				try {
+					boolean addSocketToQueue = true;
 					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					if (in.ready()) {
 						String inputLine = null;
 						if ((inputLine = in.readLine()) != null) {
-							String result = CommandEngine.query(inputLine);
+							CMDQueryResult queryResult = CommandEngine.query(inputLine);
+							String result = gson.toJson(queryResult);
 							out.println(result);
+							addSocketToQueue = CMDQueryResultStatus.CLOSE_IT.equals(queryResult.getStatus()) ? false
+									: true;
 						}
 					}
-					this.requestQueue.add(socket);
-
+					if (addSocketToQueue) {
+						this.requestQueue.add(socket);
+					} else {
+						socket.shutdownInput();
+						socket.shutdownOutput();
+						socket.close();
+					}
 				} catch (IOException e) {
 					logger.error("error on sockets");
 				}

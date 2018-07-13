@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.clusterEngine.ClusterEngine;
+import io.zino.mystore.storageEngine.QueryResult.QueryResultStatus;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 
@@ -129,9 +130,9 @@ final public class StorageEngine extends AbstractStorageEngine {
 		StorageEntry se = this.insert(storageEntry);
 		if (se != null) {
 			ClusterEngine.getInstance().addRequest(storageEntry);
-			return new QueryResult(null, null, "INSERT_TRUE");
+			return new QueryResult(null, null, QueryResultStatus.INSERT_TRUE);
 		}
-		return new QueryResult(null, null, "INSERT_FALSE");
+		return new QueryResult(null, null, QueryResultStatus.INSERT_FALSE);
 	}
 
 	/**
@@ -150,22 +151,22 @@ final public class StorageEngine extends AbstractStorageEngine {
 			if (se.getNodeId().equals(ClusterEngine.NODE_ID)) {
 				StorageEntry updateres = this.update(storageEntry);
 				if (updateres != null)
-					return new QueryResult(se.getKey(), se.getData(), "UPDATE_TRUE");
+					return new QueryResult(se.getKey(), se.getData(), QueryResultStatus.UPDATE_TRUE);
 				else
-					return new QueryResult(null, null, "UPDATE_FALSE");
+					return new QueryResult(null, null, QueryResultStatus.UPDATE_FALSE);
 			} else {
 				StorageEntry clone = se.cloneWithNewData(value);
 				StorageEntry updateRequest = ClusterEngine.getInstance().updateRequest(clone);
 				if (updateRequest != null) {
 					this.update(updateRequest);
-					return new QueryResult(updateRequest.getKey(), updateRequest.getData(), "UPDATE_TRUE");
+					return new QueryResult(updateRequest.getKey(), updateRequest.getData(), QueryResultStatus.UPDATE_TRUE);
 				} else {
 					this.delete(clone);
-					return new QueryResult(null, null, "UPDATE_FALSE");
+					return new QueryResult(null, null, QueryResultStatus.UPDATE_FALSE);
 				}
 			}
 		} else
-			return new QueryResult(null, null, "UPDATE_FALSE");
+			return new QueryResult(null, null, QueryResultStatus.UPDATE_FALSE);
 	}
 
 	/**
@@ -179,18 +180,18 @@ final public class StorageEngine extends AbstractStorageEngine {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
-			return new QueryResult(null, null, "GET_FALSE");
+			return new QueryResult(null, null, QueryResultStatus.GET_TRUE);
 		else if (se.getNodeId().equals(ClusterEngine.NODE_ID))
-			return new QueryResult(se.getKey(), se.getData(), "GET_TRUE");
+			return new QueryResult(se.getKey(), se.getData(), QueryResultStatus.GET_TRUE);
 		else {
 			StorageEntry clone = se.clone();
 			StorageEntry getRequest = ClusterEngine.getInstance().getRequest(clone);
 			if (getRequest != null) {
 				this.update(getRequest);
-				return new QueryResult(getRequest.getKey(), getRequest.getData(), "GET_TRUE");
+				return new QueryResult(getRequest.getKey(), getRequest.getData(), QueryResultStatus.GET_TRUE);
 			} else {
 				this.delete(clone);
-				return new QueryResult(null, null, "GET_FALSE");
+				return new QueryResult(null, null, QueryResultStatus.GET_FALSE);
 			}
 		}
 	}
@@ -206,18 +207,18 @@ final public class StorageEngine extends AbstractStorageEngine {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
-			return new QueryResult(null, null, "EXIST_FALSE");
+			return new QueryResult(null, null, QueryResultStatus.EXIST_FALSE);
 		else if (se.getNodeId().equals(ClusterEngine.NODE_ID))
-			return new QueryResult(null, null, "EXIST_TRUE");
+			return new QueryResult(null, null, QueryResultStatus.EXIST_TRUE);
 		else {
 			StorageEntry clone = se.clone();
 			StorageEntry getRequest = ClusterEngine.getInstance().getRequest(clone);
 			if (getRequest != null) {
 				this.update(getRequest);
-				return new QueryResult(null, null, "EXIST_TRUE");
+				return new QueryResult(null, null, QueryResultStatus.EXIST_TRUE);
 			} else {
 				this.delete(clone);
-				return new QueryResult(null, null, "EXIST_FALSE");
+				return new QueryResult(null, null, QueryResultStatus.EXIST_FALSE);
 			}
 		}
 	}
@@ -233,16 +234,16 @@ final public class StorageEngine extends AbstractStorageEngine {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
-			return new QueryResult(null, null, "DELETE_FALSE");
+			return new QueryResult(null, null, QueryResultStatus.DELETE_FALSE);
 		else {
 			if (se.getNodeId().equals(ClusterEngine.NODE_ID)) {
 				this.delete(se);
-				return new QueryResult(null, null, "DELETE_TRUE");
+				return new QueryResult(null, null, QueryResultStatus.DELETE_TRUE);
 			} else {
 				StorageEntry clone = se.clone();
 				ClusterEngine.getInstance().deleteRequest(clone);
 				this.delete(clone);
-				return new QueryResult(null, null, "DELETE_TRUE");
+				return new QueryResult(null, null, QueryResultStatus.DELETE_TRUE);
 			}
 		}
 	}

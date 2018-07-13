@@ -1,6 +1,7 @@
 add refragmentation for dbFileEngine and indexFileEngine.
 optimize clusterEngine communication.
-use cryptoghraphy for cluster engine and network engine.
+use cryptoghraphy for network engine.
+make IT transactional!
 dynamic config!
 add admin panel.
 add node monitor.
