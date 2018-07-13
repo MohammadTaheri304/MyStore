@@ -10,8 +10,6 @@ import java.security.Key;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +17,6 @@ import com.google.gson.Gson;
 
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.clusterEngine.ClusterRequest.RequestType;
-import io.zino.mystore.storageEngine.StorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 import io.zino.mystore.util.security.CryptographyUtil;
 
@@ -64,6 +61,7 @@ final public class ClusterEngine extends Thread {
 			int port = Integer.parseInt(ConfigMgr.getInstance().get("ClusterEngine.node." + i + ".port"));
 			ClusterNode clusterNode = new ClusterNode(nodeid, address, port);
 			try {
+				@SuppressWarnings("resource")
 				Socket clientSocket = new Socket(address, port);
 			} catch (IOException e) {
 				logger.error("Error on setting I/O Streams for cluster node", e);
@@ -131,9 +129,14 @@ final public class ClusterEngine extends Thread {
 	 * @return the storage entry
 	 */
 	private StorageEntry sendRequest(final String destId, final ClusterRequest request) {
+		if(request==null) return null;
 		ClusterNode dest = nodeMap.get(destId);
+		if(dest==null){
+			logger.error("ClusterNode with id="+destId +"is null!!!");
+			return null;
+		}
 		try {
-			if (dest==null || dest.objectOutputStream == null 
+			if (dest.objectOutputStream == null 
 					|| dest.objectInputStream == null 
 					|| dest.publickey == null
 					|| dest.connectionDesKey == null) {
@@ -169,6 +172,7 @@ final public class ClusterEngine extends Thread {
 	 */
 	private void prepareClusterNodeForSendingRequest(ClusterNode clusterNode) throws UnknownHostException, IOException, ClassNotFoundException {
 		// Open socket and get in/out streams
+		@SuppressWarnings("resource")
 		Socket clientSocket = new Socket(clusterNode.getAddress(), clusterNode.getPort());
 		clusterNode.objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 		clusterNode.objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
@@ -197,7 +201,7 @@ final public class ClusterEngine extends Thread {
 	 * @param key the key
 	 * @return the storage entry
 	 */
-	private StorageEntry encryptStorageEntry(final StorageEntry storageEntry, final Key key){
+	static StorageEntry encryptStorageEntry(final StorageEntry storageEntry, final Key key){
 		if(storageEntry==null) return null;
 		return storageEntry.cloneWithNewKeyAndNewData(
 				CryptographyUtil.EncryptDES(storageEntry.getKey(), key), 
@@ -211,7 +215,7 @@ final public class ClusterEngine extends Thread {
 	 * @param key the key
 	 * @return the storage entry
 	 */
-	private StorageEntry decryptStorageEntry(final StorageEntry storageEntry, final Key key){
+	static StorageEntry decryptStorageEntry(final StorageEntry storageEntry, final Key key){
 		if(storageEntry==null) return null;
 		return storageEntry.cloneWithNewKeyAndNewData(
 				CryptographyUtil.DecryptDES(storageEntry.getKey(), key),
@@ -249,193 +253,4 @@ final public class ClusterEngine extends Thread {
 		}
 	}
 	
-	/**
-	 * The Class IncommingClusterRequestHandler.
-	 */
-	public class IncommingClusterRequestHandler implements Runnable {
-		
-		/** The client socket. */
-		private Socket clientSocket;
-		
-		/** The input socket public key. */
-		private Key inputSocketPublicKey = null;
-		
-		/** The input socket des key. */
-		private Key inputSocketDesKey = null;
-		
-		/** The out. */
-		private ObjectOutputStream out = null;
-		
-		/** The input. */
-		private ObjectInputStream input = null;
-		
-		/**
-		 * Instantiates a new incomming cluster request handler.
-		 *
-		 * @param clientSocket the client socket
-		 */
-		public IncommingClusterRequestHandler(final Socket clientSocket) {
-			this.clientSocket = clientSocket;
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			try {
-				out = new ObjectOutputStream(clientSocket.getOutputStream());
-				input = new ObjectInputStream(clientSocket.getInputStream());
-			} catch (IOException e) {
-				logger.error("Error on Cluster listener", e);
-				try {
-					clientSocket.close();
-				} catch (IOException e1) {
-					logger.error("Error on closing client socket", e1);
-				} finally {
-					return;
-				}
-			}
-
-			if(!registerNode()) return;
-			
-			if(!decRegisteration()) return;
-
-			while (true) {
-				ClusterRequest request = null;
-				try {
-					request = ((ClusterRequest) input.readObject());
-				} catch (ClassNotFoundException | IOException e) {
-					logger.error("Error on Cluster listener", e);
-					break;
-				}
-				request.setStorageEntry(decryptStorageEntry(request.getStorageEntry(), inputSocketDesKey));
-				StorageEntry result = handleRequest(request);
-				try {
-					result = encryptStorageEntry(result, inputSocketDesKey);
-					out.writeObject(result);
-				} catch (IOException e) {
-					logger.error("Error on Cluster listener", e);
-				}
-			}
-			try {
-				out.close();
-			} catch (IOException e) {
-				logger.error("Error on closing connection", e);
-			}
-		}
-
-		/**
-		 * Dec registeration.
-		 *
-		 * @return true, if successful
-		 */
-		private boolean decRegisteration() {
-			ClusterRequest decRegisterationRequest = null;
-			try {
-				decRegisterationRequest = ((ClusterRequest) this.input.readObject());
-			} catch (ClassNotFoundException | IOException e) {
-				logger.error("Error on Cluster listener", e);
-				try {
-					clientSocket.close();
-				} catch (IOException e1) {
-					logger.error("Error on closing client socket", e1);
-				} 
-				return false;
-			}
-			if (!RequestType.NODE_DES_REGISTER.equals(decRegisterationRequest.getRequestType())) {
-				logger.error("Not a dec register request!");
-				try {
-					clientSocket.close();
-				} catch (IOException e1) {
-					logger.error("Error on closing client socket", e1);
-					return false;
-				}
-			} else {
-				byte[] encryptedEncodedKey = decRegisterationRequest.getDesKey();
-				byte[] encodedKey = CryptographyUtil.DecryptRSA(encryptedEncodedKey);
-				this.inputSocketDesKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "DES"); 
-			}
-			return true;
-		}
-
-		/**
-		 * Register node.
-		 *
-		 * @return true, if successful
-		 */
-		private boolean registerNode() {
-			Key inputSocketPublicKey;
-			ClusterRequest registerRequest = null;
-			try {
-				registerRequest = ((ClusterRequest) this.input.readObject());
-			} catch (ClassNotFoundException | IOException e) {
-				logger.error("Error on Cluster listener", e);
-				try {
-					clientSocket.close();
-				} catch (IOException e1) {
-					logger.error("Error on closing client socket", e1);
-				}
-				return false;
-			}
-
-			if (!RequestType.NODE_REGISTER.equals(registerRequest.getRequestType())) {
-				logger.error("Not a register request!");
-				try {
-					clientSocket.close();
-				} catch (IOException e1) {
-					logger.error("Error on closing client socket", e1);
-					return false;
-				} 
-			} else {
-				inputSocketPublicKey = registerRequest.getPublicKey();
-				try {
-					out.writeObject(CryptographyUtil.getPublicKey());
-				} catch (IOException e) {
-					logger.error("Error on Cluster listener", e);
-					try {
-						clientSocket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-					return false;
-				}
-			}
-			return true;
-		}
-		
-		/**
-		 * Handle request.
-		 *
-		 * @param request the request
-		 * @return the storage entry
-		 */
-		private StorageEntry handleRequest(final ClusterRequest request){
-			StorageEntry rse = request.getStorageEntry();
-			StorageEntry result = null;
-			switch (request.getRequestType()) {
-			case GET: {
-				result = StorageEngine.getInstance().get(rse);
-				logger.debug("GET request recived result="+gson.toJson(result));
-				break;
-			}
-			case ADD: {
-				result = StorageEngine.getInstance().insert(rse);
-				logger.debug("ADD request recived result="+gson.toJson(result));
-				break;
-			}
-			case UPDATE: {
-				result = StorageEngine.getInstance().update(rse);
-				logger.debug("UPDATE request recived result="+gson.toJson(result));
-				break;
-			}
-			case DELETE: {
-				result = StorageEngine.getInstance().delete(rse);
-				logger.debug("DELETE request recived result="+gson.toJson(result));
-				break;
-			}
-			}
-			return result;
-		}
-	} 
 }

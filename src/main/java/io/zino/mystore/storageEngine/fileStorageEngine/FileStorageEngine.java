@@ -125,7 +125,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 		StorageEntry loadEntry = this.get(storageEntry);
 		if (loadEntry == null)
 			return null;
-		DBFileEngine.dirtyEntry++;
+		DBFileEngine.dirtyEntry.incrementAndGet();
 		long newAddress = this.dbFileEngine.saveEntry(storageEntry);
 		if (newAddress == -1l)
 			return null;
@@ -143,7 +143,7 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 			return null;
 		StorageEntry loadEntry = this.dbFileEngine.loadEntry(address);
 		if (storageEntry.getKey().equals(loadEntry.getKey())) {
-			DBFileEngine.dirtyEntry++;
+			DBFileEngine.dirtyEntry.incrementAndGet();
 			this.indexFileEngine.deleteAddressKey(storageEntry.getKey());
 			return loadEntry;
 		}

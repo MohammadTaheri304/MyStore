@@ -78,7 +78,7 @@ final public class NetworkRequestHandler extends Thread {
 			} else {
 				synchronized (this.requestQueue) {
 					try {
-						this.requestQueue.wait();
+						this.requestQueue.wait(5000);
 					} catch (InterruptedException e) {
 						logger.error("error on wait!", e);
 					}

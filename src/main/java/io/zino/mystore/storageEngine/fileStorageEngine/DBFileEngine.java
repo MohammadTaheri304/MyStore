@@ -5,6 +5,7 @@ package io.zino.mystore.storageEngine.fileStorageEngine;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +35,7 @@ final public class DBFileEngine {
 	private AtomicLong writeHead = new AtomicLong(1L);
 	
 	/** The dirty entry. */
-	public static int dirtyEntry = 0;
+	public static AtomicInteger dirtyEntry = new AtomicInteger(0);
 
 	/** The db file. */
 	RandomAccessFile dbFile;

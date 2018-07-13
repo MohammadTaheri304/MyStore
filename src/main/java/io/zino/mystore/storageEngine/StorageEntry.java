@@ -12,7 +12,7 @@ import io.zino.mystore.clusterEngine.ClusterEngine;
 /**
  * The Class StorageEntry.
  */
-public class StorageEntry implements Serializable {
+public class StorageEntry implements Serializable, Cloneable {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
