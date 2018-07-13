@@ -15,8 +15,6 @@ public class CMDQueryResult {
 		SUCCESSFUL,
 		/** The failed. */
 		FAILED,
-		/** The query failed. */
-		QUERY_FAILED,
 		/** The close it. */
 		CLOSE_IT;
 	}
@@ -52,8 +50,7 @@ public class CMDQueryResult {
 	 *            the result
 	 */
 	public CMDQueryResult(QueryResult result) {
-		this(new QueryResult[] { result },
-				result.getStatus().succ ? CMDQueryResultStatus.SUCCESSFUL : CMDQueryResultStatus.FAILED);
+		this(new QueryResult[] { result }, CMDQueryResultStatus.SUCCESSFUL);
 	}
 
 	/**

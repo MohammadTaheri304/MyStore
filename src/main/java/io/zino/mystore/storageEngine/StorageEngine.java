@@ -180,7 +180,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 		StorageEntry storageEntry = new StorageEntry(key, null);
 		StorageEntry se = this.get(storageEntry);
 		if (se == null)
-			return new QueryResult(null, null, QueryResultStatus.GET_TRUE);
+			return new QueryResult(null, null, QueryResultStatus.GET_FALSE);
 		else if (se.getNodeId().equals(ClusterEngine.NODE_ID))
 			return new QueryResult(se.getKey(), se.getData(), QueryResultStatus.GET_TRUE);
 		else {

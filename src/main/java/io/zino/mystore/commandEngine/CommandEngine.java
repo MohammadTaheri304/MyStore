@@ -82,6 +82,6 @@ public class CommandEngine {
 			logger.error("Error on processing the request. query: " + query);
 		}
 
-		return new CMDQueryResult(CMDQueryResultStatus.QUERY_FAILED);
+		return new CMDQueryResult(CMDQueryResultStatus.FAILED);
 	}
 }
