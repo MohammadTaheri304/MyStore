@@ -130,7 +130,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 		StorageEntry se = this.insert(storageEntry);
 		if (se != null) {
 			ClusterEngine.getInstance().addRequest(storageEntry);
-			return new QueryResult(null, null, QueryResultStatus.INSERT_TRUE);
+			return new QueryResult(storageEntry.getKey(), storageEntry.getData(), QueryResultStatus.INSERT_TRUE);
 		}
 		return new QueryResult(null, null, QueryResultStatus.INSERT_FALSE);
 	}
@@ -151,7 +151,7 @@ final public class StorageEngine extends AbstractStorageEngine {
 			if (se.getNodeId().equals(ClusterEngine.NODE_ID)) {
 				StorageEntry updateres = this.update(storageEntry);
 				if (updateres != null)
-					return new QueryResult(se.getKey(), se.getData(), QueryResultStatus.UPDATE_TRUE);
+					return new QueryResult(updateres.getKey(), updateres.getData(), QueryResultStatus.UPDATE_TRUE);
 				else
 					return new QueryResult(null, null, QueryResultStatus.UPDATE_FALSE);
 			} else {

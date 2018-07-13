@@ -126,11 +126,12 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 		if (loadEntry == null)
 			return null;
 		DBFileEngine.dirtyEntry.incrementAndGet();
-		long newAddress = this.dbFileEngine.saveEntry(storageEntry);
+		StorageEntry clone = storageEntry.clone();
+		long newAddress = this.dbFileEngine.saveEntry(clone);
 		if (newAddress == -1l)
 			return null;
 		this.indexFileEngine.updateAddressKey(loadEntry.getKey(), newAddress);
-		return loadEntry;
+		return clone;
 	}
 
 	/* (non-Javadoc)
