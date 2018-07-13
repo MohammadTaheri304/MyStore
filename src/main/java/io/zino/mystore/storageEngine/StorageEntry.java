@@ -2,8 +2,6 @@ package io.zino.mystore.storageEngine;
 
 import java.io.Serializable;
 
-import org.json.JSONObject;
-
 import com.google.gson.Gson;
 
 import io.zino.mystore.clusterEngine.ClusterEngine;
