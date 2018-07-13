@@ -67,7 +67,6 @@ class IncommingClusterRequestHandler implements Runnable {
 				clientSocket.close();
 			} catch (IOException e1) {
 				logger.error("Error on closing client socket", e1);
-			} finally {
 				return;
 			}
 		}
@@ -208,6 +207,9 @@ class IncommingClusterRequestHandler implements Runnable {
 			logger.debug("DELETE request recived result="+gson.toJson(result));
 			break;
 		}
+		default:
+			logger.debug("Unexpected request recived="+gson.toJson(request));
+			break;
 		}
 		return result;
 	}
