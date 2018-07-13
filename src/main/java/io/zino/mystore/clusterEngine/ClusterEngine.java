@@ -60,12 +60,6 @@ final public class ClusterEngine extends Thread {
 			String address = ConfigMgr.getInstance().get("ClusterEngine.node." + i + ".address");
 			int port = Integer.parseInt(ConfigMgr.getInstance().get("ClusterEngine.node." + i + ".port"));
 			ClusterNode clusterNode = new ClusterNode(nodeid, address, port);
-			try {
-				@SuppressWarnings("resource")
-				Socket clientSocket = new Socket(address, port);
-			} catch (IOException e) {
-				logger.error("Error on setting I/O Streams for cluster node", e);
-			}
 			this.nodeMap.put(nodeid, clusterNode);
 
 		}
