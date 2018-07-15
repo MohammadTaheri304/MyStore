@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,10 +28,10 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 	private static FileStorageEngine instance = new FileStorageEngine();
 
 	/** The index file engine. */
-	IndexFileEngine indexFileEngine;
+	final IndexFileEngine indexFileEngine;
 	
 	/** The db file engine. */
-	DBFileEngine dbFileEngine;
+	final DBFileEngine dbFileEngine;
 
 	/**
 	 * Gets the file access.
@@ -149,5 +150,28 @@ final public class FileStorageEngine extends AbstractStorageEngine {
 			return loadEntry;
 		}
 		return null;
+	}
+
+	@Override
+	public Iterable<String> getKeys() {
+		return new Iterable<String>() {
+			
+			@Override
+			public Iterator<String> iterator() {
+				return new Iterator<String>() {
+					Iterator<IndexFileEntry> indexEntries = FileStorageEngine.this.indexFileEngine.getIndexEntries().iterator();
+					
+					@Override
+					public boolean hasNext() {
+						return indexEntries.hasNext();
+					}
+
+					@Override
+					public String next() {
+						return indexEntries.next().getKey();
+					}
+				};
+			}
+		};
 	}
 }

@@ -1,5 +1,7 @@
 package io.zino.mystore.storageEngine;
 
+import java.util.Iterator;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,10 +22,10 @@ final public class StorageEngine extends AbstractStorageEngine {
 	private static StorageEngine instance = new StorageEngine();
 
 	/** The memory storage engine. */
-	private MemoryStorageEngine memoryStorageEngine;
+	private final MemoryStorageEngine memoryStorageEngine;
 
 	/** The file storage engine. */
-	private FileStorageEngine fileStorageEngine;
+	private final FileStorageEngine fileStorageEngine;
 
 	/**
 	 * Gets the single instance of StorageEngine.
@@ -53,10 +55,10 @@ final public class StorageEngine extends AbstractStorageEngine {
 	 */
 	@Override
 	public StorageEntry get(final StorageEntry storageEntry) {
-		StorageEntry se = memoryStorageEngine.get(storageEntry);
+		StorageEntry se = this.memoryStorageEngine.get(storageEntry);
 		if (se != null)
 			return se;
-		return fileStorageEngine.get(storageEntry);
+		return this.fileStorageEngine.get(storageEntry);
 	}
 
 	/*
@@ -159,7 +161,8 @@ final public class StorageEngine extends AbstractStorageEngine {
 				StorageEntry updateRequest = ClusterEngine.getInstance().updateRequest(clone);
 				if (updateRequest != null) {
 					this.update(updateRequest);
-					return new QueryResult(updateRequest.getKey(), updateRequest.getData(), QueryResultStatus.UPDATE_TRUE);
+					return new QueryResult(updateRequest.getKey(), updateRequest.getData(),
+							QueryResultStatus.UPDATE_TRUE);
 				} else {
 					this.delete(clone);
 					return new QueryResult(null, null, QueryResultStatus.UPDATE_FALSE);
@@ -246,6 +249,38 @@ final public class StorageEngine extends AbstractStorageEngine {
 				return new QueryResult(null, null, QueryResultStatus.DELETE_TRUE);
 			}
 		}
+	}
+
+	@Override
+	public Iterable<String> getKeys() {
+		return new Iterable<String>() {
+
+			@Override
+			public Iterator<String> iterator() {
+				return new Iterator<String>() {
+					Iterator<String> memoryStorageEngineIterator = StorageEngine.this.memoryStorageEngine.getKeys()
+							.iterator();
+					Iterator<String> fileStorageEngineIterator = StorageEngine.this.fileStorageEngine.getKeys()
+							.iterator();
+
+					@Override
+					public boolean hasNext() {
+						return memoryStorageEngineIterator.hasNext() ? true : fileStorageEngineIterator.hasNext();
+					}
+
+					/* (non-Javadoc)
+					 * @see java.util.Iterator#next()
+					 */
+					@Override
+					public String next() {
+						if (memoryStorageEngineIterator.hasNext())
+							return memoryStorageEngineIterator.next();
+						else
+							return fileStorageEngineIterator.next();
+					}
+				};
+			}
+		};
 	}
 
 }

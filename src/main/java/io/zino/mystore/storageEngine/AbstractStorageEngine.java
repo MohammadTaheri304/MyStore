@@ -45,4 +45,11 @@ abstract public class AbstractStorageEngine {
 	 */
 	public abstract StorageEntry delete(final StorageEntry storageEntry);
 
+	
+	/**
+	 * Gets the keys.
+	 *
+	 * @return the keys
+	 */
+	public abstract Iterable<String> getKeys();
 }

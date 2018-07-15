@@ -62,12 +62,12 @@ final public class FileStorageEngineOptimizer {
 			boolean decSleppDuration = false;
 
 			List<Long> upgradeList = new ArrayList<>();
-			for (Long indexEntry : this.fileStorageEngine.indexFileEngine.getIndexEntries()) {
-				StorageEntry entry = this.fileStorageEngine.dbFileEngine.loadEntry(indexEntry);
+			for (IndexFileEntry indexEntry : this.fileStorageEngine.indexFileEngine.getIndexEntries()) {
+				StorageEntry entry = this.fileStorageEngine.dbFileEngine.loadEntry(indexEntry.getValue());
 				long idealTime = System.currentTimeMillis() - entry.getLastAccess();
 				double aging = entry.getTouchCount() / (idealTime + 1);
 				if (aging >= agingThreshold) {
-					upgradeList.add(indexEntry);
+					upgradeList.add(indexEntry.getValue());
 				}
 			}
 

@@ -190,4 +190,9 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 		}
 		return null;
 	}
+
+	@Override
+	public Iterable<String> getKeys() {
+		return this.data.keySet();
+	}
 }
