@@ -21,6 +21,7 @@ public class UIEngine {
 		Server server = new Server(7070);
 		ServletContextHandler handler = new ServletContextHandler(server, "/mystore");
 		handler.addServlet(HomePageServlet.class, "/");
+		handler.addServlet(AllKeyPageServlet.class, "/keys");
 		try {
 			server.start();
 		} catch (Exception e) {
