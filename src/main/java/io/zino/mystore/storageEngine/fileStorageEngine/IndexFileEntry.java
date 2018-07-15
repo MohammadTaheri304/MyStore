@@ -1,6 +1,6 @@
 package io.zino.mystore.storageEngine.fileStorageEngine;
 
-public class IndexFileEntry {
+class IndexFileEntry {
 
 	private long child1;
 	private long child2;

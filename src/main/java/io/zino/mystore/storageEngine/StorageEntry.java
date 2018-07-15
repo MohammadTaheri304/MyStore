@@ -48,7 +48,7 @@ public class StorageEntry implements Serializable, Cloneable {
 	 * @param key the key
 	 * @param data the data
 	 */
-	public StorageEntry(String key, String data) {
+	StorageEntry(String key, String data) {
 		this(0l, key, data);
 	}
 
@@ -59,7 +59,7 @@ public class StorageEntry implements Serializable, Cloneable {
 	 * @param key the key
 	 * @param data the data
 	 */
-	public StorageEntry(long version, String key, String data) {
+	private StorageEntry(long version, String key, String data) {
 		this(version, ClusterEngine.NODE_ID, key, data);
 	}
 
@@ -163,7 +163,7 @@ public class StorageEntry implements Serializable, Cloneable {
 	 * @param data the data
 	 * @return the storage entry
 	 */
-	public StorageEntry cloneWithNewData(String data) {
+	StorageEntry cloneWithNewData(String data) {
 		 return cloneWithNewKeyAndNewData(this.getKey(), data);
 	}
 	

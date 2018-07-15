@@ -16,7 +16,7 @@ import io.zino.mystore.storageEngine.StorageEntry;
 /**
  * The Class DBFileEngine.
  */
-final public class DBFileEngine {
+final class DBFileEngine {
 	
 	/** The Constant logger. */
 	final static Logger logger = LogManager.getLogger(DBFileEngine.class);
@@ -26,7 +26,7 @@ final public class DBFileEngine {
 	 *
 	 * @param dbFile the db file
 	 */
-	public DBFileEngine(RandomAccessFile dbFile) {
+	DBFileEngine(RandomAccessFile dbFile) {
 		super();
 		this.dbFile = dbFile;
 	}

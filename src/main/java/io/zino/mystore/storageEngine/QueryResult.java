@@ -10,7 +10,7 @@ public class QueryResult {
 	/**
 	 * The Enum QueryResultStatus.
 	 */
-	public enum QueryResultStatus{
+	enum QueryResultStatus{
 		
 		/** The insert true. */
 		INSERT_TRUE(true),
@@ -72,7 +72,7 @@ public class QueryResult {
 	 * @param value the value
 	 * @param status the status
 	 */
-	public QueryResult(String key, String value, QueryResultStatus status) {
+	QueryResult(String key, String value, QueryResultStatus status) {
 		super();
 		this.key = key;
 		this.value = value;

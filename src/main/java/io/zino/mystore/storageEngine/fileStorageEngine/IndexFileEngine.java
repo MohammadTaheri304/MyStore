@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * The Class IndexFileEngine.
  */
-final public class IndexFileEngine {
+final class IndexFileEngine {
 
 	/** The Constant logger. */
 	final static Logger logger = LogManager.getLogger(IndexFileEngine.class);
@@ -28,7 +28,7 @@ final public class IndexFileEngine {
 	 * @param dbIndexFile
 	 *            the db index file
 	 */
-	public IndexFileEngine(RandomAccessFile dbIndexFile) {
+	IndexFileEngine(RandomAccessFile dbIndexFile) {
 		this.indexFile = dbIndexFile;
 	}
 
@@ -336,26 +336,6 @@ final public class IndexFileEngine {
 			return this.updateAddressKey(key, value, childAt, depth + 1);
 		}
 	}
-
-	/**
-	 * Gets the index entry.
-	 *
-	 * @param item
-	 *            the item
-	 * @return the index entry
-	 */
-	public Long getIndexEntry(long item) {
-		try {
-			IndexFileEntry entry = this.getIndexEntry(item, 0, 0);
-			if (entry != null)
-				return entry.getValue();
-		} catch (EOFException e) {
-			logger.error("EOF Error on getIndexEntry", e);
-		}
-
-		return -1L;
-	}
-
 	
 	public Iterable<Long> getIndexEntries(){
 		return new Iterable<Long>() {
