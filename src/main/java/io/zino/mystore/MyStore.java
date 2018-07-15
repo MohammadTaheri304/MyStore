@@ -8,6 +8,7 @@ import io.zino.mystore.networkEngine.NetworkEngine;
 import io.zino.mystore.networkEngine.NetworkRequestHandlerEngine;
 import io.zino.mystore.storageEngine.StorageEngine;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngineOptimizer;
+import io.zino.mystore.uiEngine.UIEngine;
 import io.zino.mystore.util.security.CryptographyUtil;
 
 /**
@@ -35,6 +36,7 @@ public class MyStore {
 		ClusterEngine.getInstance();
 		NetworkEngine.getInstance();
 		NetworkRequestHandlerEngine.getInstance();
+		UIEngine.getInstance();
 		
 		System.out.println("MyStore Started! "+System.currentTimeMillis());
 	}
