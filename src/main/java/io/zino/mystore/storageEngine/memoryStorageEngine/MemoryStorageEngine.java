@@ -74,13 +74,13 @@ final public class MemoryStorageEngine extends AbstractStorageEngine {
 					sumOfages += aging;
 				}
 				double agingThresh = sumOfages / (this.data.size());
-				for (Entry<String, StorageEntry> entry : this.data.entrySet()) {
+				this.data.entrySet().parallelStream().forEach(entry -> {
 					double aging = evalAging(entry);
 					if (aging <= agingThresh) {
 						this.downgarde(entry.getValue());
 						this.data.remove(entry.getKey());
 					}
-				}
+				});
 
 			} else {
 				sleepDuration *= (1.2);

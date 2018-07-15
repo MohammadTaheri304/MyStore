@@ -71,13 +71,13 @@ final public class FileStorageEngineOptimizer {
 				}
 			}
 
-			for (Long indexEntry : upgradeList) {
+			decSleppDuration = upgradeList.isEmpty() ? false : true;
+			
+			upgradeList.parallelStream().forEach(indexEntry -> {
 				StorageEntry entry = this.fileStorageEngine.dbFileEngine.loadEntry(indexEntry);
 				this.upgrade(entry);
 				this.fileStorageEngine.delete(entry);
-				
-				decSleppDuration = true;
-			}
+			});
 			
 			sleepDuration = (long) (decSleppDuration ? sleepDuration * (0.8) : sleepDuration * (1.2));
 			sleepDuration = (MAX_SLEEP_DURATION < sleepDuration) ? MAX_SLEEP_DURATION : sleepDuration;
