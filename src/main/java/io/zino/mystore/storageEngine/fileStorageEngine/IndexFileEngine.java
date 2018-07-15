@@ -337,20 +337,75 @@ final class IndexFileEngine {
 		}
 	}
 	
-	public Iterable<Long> getIndexEntries(){
-		return new Iterable<Long>() {
+	public Iterable<IndexFileEntry> getIndexEntries(){
+		return new Iterable<IndexFileEntry>() {
+			private final AtomicLong destItem = new AtomicLong(0);
 			
 			@Override
-			public Iterator<Long> iterator() {
-				return new Iterator<Long>() {
-
-					long current = 0;
-					long head = 0;
+			public Iterator<IndexFileEntry> iterator() {
+				return new Iterator<IndexFileEntry>() {
+					private  AtomicLong currentItem;
+					
+					/**
+					 * Gets the index entry.
+					 *
+					 * @param destItem
+					 *            the dest item
+					 * @param head
+					 *            the head
+					 * @return the index entry
+					 */
+					public IndexFileEntry getIndexEntry(final long dest, long head) throws EOFException {
+				 		IndexFileEntry entry = IndexFileEngine.this.loadIndexFileEntry(head);
+						if (entry == null) {
+							return null;
+						} else if (currentItem.get() == dest) {
+							return entry;
+						} else {
+							long childAt1 = entry.getChildAt(1);
+							if (childAt1 != -1 && childAt1 != 0) {
+								currentItem.incrementAndGet();
+								IndexFileEntry ch1 = getIndexEntry(dest, childAt1);
+								if (ch1 != null)
+									return ch1;
+							}
+							long childAt2 = entry.getChildAt(2);
+							if (childAt2 != -1 && childAt2 != 0) {
+								currentItem.incrementAndGet();
+								IndexFileEntry ch2 = getIndexEntry(dest, childAt2);
+								if (ch2 != null)
+									return ch2;
+							}
+							long childAt3 = entry.getChildAt(3);
+							if (childAt3 != -1 && childAt3 != 0) {
+								currentItem.incrementAndGet();
+								IndexFileEntry ch3 = getIndexEntry(dest, childAt3);
+								if (ch3 != null)
+									return ch3;
+							}
+							long childAt4 = entry.getChildAt(4);
+							if (childAt4 != -1 && childAt4 != 0) {
+								currentItem.incrementAndGet();
+								IndexFileEntry ch4 = getIndexEntry(dest, childAt4);
+								if (ch4 != null)
+									return ch4;
+							}
+							long childAt5 = entry.getChildAt(5);
+							if (childAt5 != -1 && childAt5 != 0) {
+								currentItem.incrementAndGet();
+								IndexFileEntry ch5 = getIndexEntry(dest, childAt5);
+								if (ch5 != null)
+									return ch5;
+							}
+							return null;
+						}
+					}
 					
 					@Override
 					public boolean hasNext() {
 						try {
-							return getIndexEntry(current+1, current, head)!=null ? true : false;
+							currentItem = new AtomicLong(0);
+							return getIndexEntry(destItem.get()+1, 0)!=null ? true : false;
 						} catch (EOFException e) {
 							logger.error("EOF Error on getIndexEntries::next", e);
 						}
@@ -358,66 +413,19 @@ final class IndexFileEngine {
 					}
 
 					@Override
-					public Long next() {
+					public IndexFileEntry next() {
 						try {
-							return getIndexEntry(++current, current-1, head).getValue();
+							currentItem = new AtomicLong(0);
+							destItem.incrementAndGet();
+							return getIndexEntry(destItem.get(), 0);
 						} catch (EOFException e) {
 							logger.error("EOF Error on getIndexEntries::next", e);
 						}
-						return -1l;
+						return null;
 					}
 				};
 			}
 		};
 	}
-	
-	/**
-	 * Gets the index entry.
-	 *
-	 * @param destItem
-	 *            the dest item
-	 * @param head
-	 *            the head
-	 * @return the index entry
-	 */
-	public IndexFileEntry getIndexEntry(long destItem, long currentItem, long head) throws EOFException {
-		IndexFileEntry entry = this.loadIndexFileEntry(head);
-		if (entry == null) {
-			return null;
-		} else if (currentItem == destItem) {
-			return entry;
-		} else {
-			long childAt1 = entry.getChildAt(1);
-			if (childAt1 != -1 || childAt1 != 0) {
-				IndexFileEntry ch1 = getIndexEntry(destItem, ++currentItem, childAt1);
-				if (ch1 != null)
-					return ch1;
-			}
-			long childAt2 = entry.getChildAt(2);
-			if (childAt2 != -1 || childAt2 != 0) {
-				IndexFileEntry ch2 = getIndexEntry(destItem, ++currentItem, childAt2);
-				if (ch2 != null)
-					return ch2;
-			}
-			long childAt3 = entry.getChildAt(3);
-			if (childAt3 != -1 || childAt3 != 0) {
-				IndexFileEntry ch3 = getIndexEntry(destItem, ++currentItem, childAt3);
-				if (ch3 != null)
-					return ch3;
-			}
-			long childAt4 = entry.getChildAt(4);
-			if (childAt4 != -1 || childAt4 != 0) {
-				IndexFileEntry ch4 = getIndexEntry(destItem, ++currentItem, childAt4);
-				if (ch4 != null)
-					return ch4;
-			}
-			long childAt5 = entry.getChildAt(5);
-			if (childAt5 != -1 || childAt5 != 0) {
-				IndexFileEntry ch5 = getIndexEntry(destItem, ++currentItem, childAt5);
-				if (ch5 != null)
-					return ch5;
-			}
-			return null;
-		}
-	}
+
 }
