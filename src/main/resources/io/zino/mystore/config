@@ -1,5 +1,7 @@
 MemoryStorageEngine.size=10
 
+UIEngine.port=7070
+
 FileStorageEngine.upgradeAgingThreshold=0.001
 FileStorageEngine.dbFile=db.mysdb
 FileStorageEngine.dbIndexFile=db.mysidx

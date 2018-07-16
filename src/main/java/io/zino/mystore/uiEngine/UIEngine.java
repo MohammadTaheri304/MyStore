@@ -17,8 +17,8 @@ public class UIEngine {
 	}
 
 	private UIEngine() {
-
-		Server server = new Server(7070);
+		final int port = Integer.parseInt(ConfigMgr.getInstance().get("UIEngine.port"));
+		Server server = new Server(port);
 		ServletContextHandler handler = new ServletContextHandler(server, "/mystore");
 		handler.addServlet(HomePageServlet.class, "/");
 		handler.addServlet(AllKeyPageServlet.class, "/keys");
