@@ -20,7 +20,10 @@ final public class ConfigMgr {
 	private static ConfigMgr instance = new ConfigMgr();
 	
 	/** The prop. */
-	private Properties prop; 
+	private Properties prop;
+	
+	/** The embedded prop. */
+	private Properties embeddedProp; 
 	
 	/**
 	 * Gets the single instance of ConfigMgr.
@@ -40,13 +43,15 @@ final public class ConfigMgr {
 	 */
 	private ConfigMgr() {
 		this.prop = new Properties();
+		this.embeddedProp = new Properties();
 		try {
 			File file = new File("config");
 			if(file.exists()){
 				prop.load(new FileInputStream(file));
-			}else{
-				prop.load(this.getClass().getResourceAsStream("config"));
 			}
+			
+			embeddedProp.load(this.getClass().getResourceAsStream("config"));
+		
 		} catch (IOException e) {
 			logger.error("Error on loading config", e);
 			System.exit(-1);
@@ -62,6 +67,7 @@ final public class ConfigMgr {
 	 * @return the string
 	 */
 	public String get(String key){
-		return this.prop.getProperty(key);
+		String property = this.prop.getProperty(key);
+		return property==null ? this.embeddedProp.getProperty(key) : property;
 	}
 }
