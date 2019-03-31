@@ -8,12 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.storageEngine.AbstractStorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class FileStorageEngine.
@@ -21,7 +20,7 @@ import io.zino.mystore.storageEngine.StorageEntry;
 final public class FileStorageEngine extends AbstractStorageEngine {
 	
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(FileStorageEngine.class);
+	final static Logger logger = LoggerFactory.getLogger(FileStorageEngine.class);
 	
 	/** The instance. */
 	private static FileStorageEngine instance = new FileStorageEngine();

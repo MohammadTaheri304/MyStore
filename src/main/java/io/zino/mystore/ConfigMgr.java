@@ -1,12 +1,12 @@
 package io.zino.mystore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Class ConfigMgr.
@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 final public class ConfigMgr {
 	
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(ConfigMgr.class);
+	final static Logger logger = LoggerFactory.getLogger(ConfigMgr.class);
 	
 	/** The instance. */
 	private static ConfigMgr instance = new ConfigMgr();

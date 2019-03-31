@@ -8,10 +8,9 @@ import java.io.RandomAccessFile;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.zino.mystore.storageEngine.StorageEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class DBFileEngine.
@@ -19,7 +18,7 @@ import io.zino.mystore.storageEngine.StorageEntry;
 final class DBFileEngine {
 	
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(DBFileEngine.class);
+	final static Logger logger = LoggerFactory.getLogger(DBFileEngine.class);
 
 	/**
 	 * Instantiates a new DB file engine.

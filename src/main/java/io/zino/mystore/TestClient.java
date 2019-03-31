@@ -1,5 +1,8 @@
 package io.zino.mystore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,15 +12,14 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 /**
  * The Class TestClient.
  */
 public class TestClient {
 	
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(TestClient.class);
+	final static Logger logger = LoggerFactory.getLogger(TestClient.class);
 	
 	/**
 	 * The main method.
