@@ -1,12 +1,11 @@
 package io.zino.mystore.storageEngine;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.zino.mystore.clusterEngine.ClusterEngine;
 import io.zino.mystore.storageEngine.QueryResult.QueryResultStatus;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class StorageEngine.
@@ -14,7 +13,7 @@ import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 final public class StorageEngine extends AbstractStorageEngine {
 
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(StorageEngine.class);
+	final static Logger logger = LoggerFactory.getLogger(StorageEngine.class);
 
 	/** The instance. */
 	private static StorageEngine instance = new StorageEngine();

@@ -1,13 +1,14 @@
 package io.zino.mystore.storageEngine.fileStorageEngine;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Class IndexFileEngine.
@@ -15,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 final class IndexFileEngine {
 
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(IndexFileEngine.class);
+	final static Logger logger = LoggerFactory.getLogger(IndexFileEngine.class);
 
 	/** The write head. */
 	private static AtomicLong writeHead = new AtomicLong(0l);

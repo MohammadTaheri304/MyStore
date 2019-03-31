@@ -1,14 +1,13 @@
 package io.zino.mystore;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.zino.mystore.clusterEngine.ClusterEngine;
 import io.zino.mystore.networkEngine.NetworkEngine;
 import io.zino.mystore.networkEngine.NetworkRequestHandlerEngine;
 import io.zino.mystore.storageEngine.StorageEngine;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngineOptimizer;
 import io.zino.mystore.util.security.CryptographyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class MyStore.
@@ -17,7 +16,7 @@ import io.zino.mystore.util.security.CryptographyUtil;
 public class MyStore {
 	
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(MyStore.class);
+	final static Logger logger = LoggerFactory.getLogger(MyStore.class);
 
 	/**
 	 * The main method.

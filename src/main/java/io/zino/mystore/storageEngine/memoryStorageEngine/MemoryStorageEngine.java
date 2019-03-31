@@ -4,13 +4,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.storageEngine.AbstractStorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class MemoryStorageEngine.
@@ -18,7 +17,7 @@ import io.zino.mystore.storageEngine.fileStorageEngine.FileStorageEngine;
 final public class MemoryStorageEngine extends AbstractStorageEngine {
 
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(MemoryStorageEngine.class);
+	final static Logger logger = LoggerFactory.getLogger(MemoryStorageEngine.class);
 
 	/** The instance. */
 	private static MemoryStorageEngine instance = new MemoryStorageEngine();

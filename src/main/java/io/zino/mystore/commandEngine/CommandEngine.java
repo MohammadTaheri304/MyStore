@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.Gson;
 
 import io.zino.mystore.commandEngine.CMDQueryResult.CMDQueryResultStatus;
 import io.zino.mystore.storageEngine.QueryResult;
 import io.zino.mystore.storageEngine.StorageEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class CommandEngine.
@@ -20,7 +19,7 @@ import io.zino.mystore.storageEngine.StorageEngine;
 public class CommandEngine {
 
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(CommandEngine.class);
+	final static Logger logger = LoggerFactory.getLogger(CommandEngine.class);
 
 	final static private Gson gson = new Gson();
 

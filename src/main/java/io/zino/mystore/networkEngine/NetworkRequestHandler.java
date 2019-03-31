@@ -7,14 +7,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Queue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.Gson;
 
 import io.zino.mystore.commandEngine.CMDQueryResult;
 import io.zino.mystore.commandEngine.CMDQueryResult.CMDQueryResultStatus;
 import io.zino.mystore.commandEngine.CommandEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -23,7 +22,7 @@ import io.zino.mystore.commandEngine.CommandEngine;
 final public class NetworkRequestHandler extends Thread {
 
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(NetworkRequestHandler.class);
+	final static Logger logger = LoggerFactory.getLogger(NetworkRequestHandler.class);
 
 	/** The request queue. */
 	private Queue<Socket> requestQueue;

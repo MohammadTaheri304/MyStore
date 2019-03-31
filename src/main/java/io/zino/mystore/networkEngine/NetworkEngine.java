@@ -6,10 +6,10 @@ import java.net.Socket;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class NetworkEngine.
@@ -17,7 +17,7 @@ import io.zino.mystore.ConfigMgr;
 final public class NetworkEngine extends Thread{
 	
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(NetworkEngine.class);
+	final static Logger logger = LoggerFactory.getLogger(NetworkEngine.class);
 
 	/** The instance. */
 	private static NetworkEngine instance = new NetworkEngine();

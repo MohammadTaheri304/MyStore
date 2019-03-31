@@ -3,12 +3,12 @@ package io.zino.mystore.storageEngine.fileStorageEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import io.zino.mystore.ConfigMgr;
 import io.zino.mystore.storageEngine.StorageEntry;
 import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -17,7 +17,7 @@ import io.zino.mystore.storageEngine.memoryStorageEngine.MemoryStorageEngine;
 final public class FileStorageEngineOptimizer {
 
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(FileStorageEngineOptimizer.class);
+	final static Logger logger = LoggerFactory.getLogger(FileStorageEngineOptimizer.class);
 
 	/** The instance. */
 	private static FileStorageEngineOptimizer instance = new FileStorageEngineOptimizer();

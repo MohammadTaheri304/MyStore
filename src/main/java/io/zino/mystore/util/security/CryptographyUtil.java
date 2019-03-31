@@ -14,15 +14,15 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.sun.mail.util.BASE64DecoderStream;
 import com.sun.mail.util.BASE64EncoderStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CryptographyUtil {
 
-	final static Logger logger = LogManager.getLogger(CryptographyUtil.class);
+	final static Logger logger = LoggerFactory.getLogger(CryptographyUtil.class);
 	final static private int RSA_KEY_SIZE = 1024;
 	private static KeyPair keyPair;
 
@@ -40,7 +40,7 @@ public class CryptographyUtil {
 		try {
 			CryptographyUtil.generateTheUniqueKeys();
 		} catch (NoSuchAlgorithmException e) {
-			logger.error(e);
+			logger.error("Exception while generating TheUniqueKeys",e);
 		}
 	}
 
@@ -53,24 +53,8 @@ public class CryptographyUtil {
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return cipher.doFinal(data);
-		} catch (NoSuchAlgorithmException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			logger.error(e);
-			e.printStackTrace();
 		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
+			logger.error("Exception while encrypting", e);
 		}
 		return null;
 	}
@@ -94,21 +78,8 @@ public class CryptographyUtil {
 			Cipher decrypt = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			decrypt.init(Cipher.DECRYPT_MODE, key);
 			return decrypt.doFinal(encryptedData);
-		} catch (NoSuchAlgorithmException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			logger.error(e);
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			logger.error(e);
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("Exception while decrypting",e);
 		} 
 		return null;
 	}

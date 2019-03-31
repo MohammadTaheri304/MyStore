@@ -8,8 +8,6 @@ import java.security.Key;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 
@@ -17,6 +15,8 @@ import io.zino.mystore.clusterEngine.ClusterRequest.RequestType;
 import io.zino.mystore.storageEngine.StorageEngine;
 import io.zino.mystore.storageEngine.StorageEntry;
 import io.zino.mystore.util.security.CryptographyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class IncommingClusterRequestHandler.
@@ -24,7 +24,7 @@ import io.zino.mystore.util.security.CryptographyUtil;
 class IncommingClusterRequestHandler implements Runnable {
 	
 	/** The Constant logger. */
-	final static Logger logger = LogManager.getLogger(IncommingClusterRequestHandler.class);
+	final static Logger logger = LoggerFactory.getLogger(IncommingClusterRequestHandler.class);
 	
 	/** The client socket. */
 	private Socket clientSocket;
